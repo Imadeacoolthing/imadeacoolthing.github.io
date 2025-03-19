@@ -21,10 +21,11 @@
 </head>
 <body>
     <canvas id="gameCanvas" width="800" height="800"></canvas>
+    <h1>SCORE: <span id="scoredisp">0</span></h1>
     <script>
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
-        
+        var score = 0;
         const box = 20;
         let snake = [];
         for (let i = 0; i < 5; i++) {
@@ -146,7 +147,7 @@
 
         function draw() {
             if (gameOver) return;
-
+            document.getElementById("scoredisp").innerHTML = score;
             direction = nextDirection;
 
             // Move the snake
@@ -183,7 +184,7 @@
             if (head.x === food.x && head.y === food.y) {
                 // Grow the snake by adding a new segment
                 // We don't remove the tail to simulate growth
-
+                score += 1;
                 // Generate new food
                 food = {
                     x: Math.floor(Math.random() * 40) * box,
@@ -221,6 +222,7 @@
                         enemies.splice(eIndex, 1);
                         enemyDirections.splice(eIndex, 1);
                         pellets.splice(index, 1);
+                        score += 5;
                     }
                 });
             });
@@ -237,9 +239,9 @@
         }
 
         setInterval(() => {
-            // Every 2 seconds, make a random 50% chance for enemies to turn
+            // Every 1 second, make a random 50% chance for enemies to turn
             enemies.forEach((_, index) => randomTurn(index));
-        }, 2000);  // Every 2 seconds
+        }, 1000);  // Every 2 second
 
         setInterval(draw, 100);
     </script>
