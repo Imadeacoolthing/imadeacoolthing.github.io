@@ -41,12 +41,16 @@
         let enemies = [];
         let enemyDirections = [];
         
+        let gameOver = false;
+
         document.addEventListener("keydown", (event) => {
-            event.preventDefault();
-            changeDirection(event);
+            if (!gameOver) {
+                event.preventDefault();
+                changeDirection(event);
+            }
         });
         document.addEventListener("keydown", shootPellet);
-        
+
         function spawnEnemy() {
             if (Math.random() < 0.5) {
                 let enemyLength = Math.max(snake.length - 2, 1);
@@ -64,9 +68,9 @@
                 enemyDirections.push(["UP", "DOWN", "LEFT", "RIGHT"][Math.floor(Math.random() * 4)]);
             }
         }
-        
+
         setInterval(spawnEnemy, Math.floor(Math.random() * 3000) + 12000);
-        
+
         function moveEnemies() {
             enemies.forEach((enemy, index) => {
                 let enemyDirection = enemyDirections[index];
@@ -85,7 +89,7 @@
                 enemy.pop();
             });
         }
-        
+
         function changeDirection(event) {
             const key = event.key;
             if (key === "ArrowUp" && direction !== "DOWN") nextDirection = "UP";
@@ -93,15 +97,39 @@
             else if (key === "ArrowLeft" && direction !== "RIGHT") nextDirection = "LEFT";
             else if (key === "ArrowRight" && direction !== "LEFT") nextDirection = "RIGHT";
         }
-        
+
         function shootPellet(event) {
-            if (event.key === "z") {
+            if (event.key === "z" && !gameOver) {
                 let pellet = { x: snake[0].x, y: snake[0].y, dir: direction };
                 pellets.push(pellet);
             }
         }
-        
+
+        function checkSelfCollision() {
+            // Check if snake's head collides with any of its body segments
+            for (let i = 1; i < snake.length; i++) {
+                if (snake[i].x === snake[0].x && snake[i].y === snake[0].y) {
+                    return true; // Snake hits itself
+                }
+            }
+            return false;
+        }
+
+        function checkEnemyCollision() {
+            // Check if snake's head collides with any enemy
+            for (let enemy of enemies) {
+                for (let segment of enemy) {
+                    if (snake[0].x === segment.x && snake[0].y === segment.y) {
+                        return true; // Snake hits enemy
+                    }
+                }
+            }
+            return false;
+        }
+
         function draw() {
+            if (gameOver) return;
+
             direction = nextDirection;
 
             // Move the snake
@@ -116,6 +144,20 @@
             else if (head.x >= canvas.width) head.x = 0;
             else if (head.y < 0) head.y = canvas.height - box;
             else if (head.y >= canvas.height) head.y = 0;
+
+            // Check for self-collision
+            if (checkSelfCollision()) {
+                gameOver = true;
+                alert("Game Over! You hit yourself.");
+                return;
+            }
+
+            // Check for enemy collision
+            if (checkEnemyCollision()) {
+                gameOver = true;
+                alert("Game Over! You hit an enemy.");
+                return;
+            }
 
             // Add new head to snake array
             snake.unshift(head);
