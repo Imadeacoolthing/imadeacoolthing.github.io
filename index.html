@@ -17,11 +17,14 @@
         canvas {
             border: 2px solid white;
         }
+        #beans {
+            color: white;
+        }
     </style>
 </head>
 <body>
     <canvas id="gameCanvas" width="800" height="800"></canvas>
-    <h1>SCORE: <span id="scoredisp">0</span></h1>
+    <h1 id="beans">SCORE: <span id="scoredisp">0</span></h1>
     <script>
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
@@ -54,7 +57,7 @@
         document.addEventListener("keydown", shootPellet);
 
         function spawnEnemy() {
-            if (Math.random() < 0.5) {
+            if (Math.random() < 0.75) {
                 let enemyLength = Math.max(snake.length - 2, 1);
                 let enemyX, enemyY;
                 do {
@@ -75,7 +78,7 @@
         setInterval(spawnEnemy, Math.floor(Math.random() * 3000) + 12000);
 
         function randomTurn(index) {
-            if (Math.random() < 0.5) {  // 50% chance to change direction
+            if (Math.random() < 0.75) {  // 75% chance to change direction
                 const directions = ["UP", "DOWN", "LEFT", "RIGHT"];
                 let randomDirection = directions[Math.floor(Math.random() * 4)];
                 enemyDirections[index] = randomDirection;
