@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Snake Game</title>
     <style>
         body {
@@ -11,6 +11,8 @@
             align-items: center;
             height: 100vh;
             background-color: #222;
+            overflow: hidden;
+            margin: 0;
         }
         canvas {
             border: 2px solid white;
@@ -18,21 +20,25 @@
     </style>
 </head>
 <body>
-    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <canvas id="gameCanvas" width="800" height="800"></canvas>
     <script>
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
         
         const box = 20;
-        let snake = [{ x: 200, y: 200 }];
+        let snake = [{ x: 400, y: 400 }];
         let direction = "RIGHT";
         let food = {
-            x: Math.floor(Math.random() * 20) * box,
-            y: Math.floor(Math.random() * 20) * box
+            x: Math.floor(Math.random() * 40) * box,
+            y: Math.floor(Math.random() * 40) * box
         };
         let pellets = [];
+        let pelletSpeed = 40; // Modifiable bullet speed variable
         
-        document.addEventListener("keydown", changeDirection);
+        document.addEventListener("keydown", (event) => {
+            event.preventDefault(); // Prevent scrolling on iOS
+            changeDirection(event);
+        });
         document.addEventListener("keydown", shootPellet);
         
         function changeDirection(event) {
@@ -65,10 +71,10 @@
             ctx.fillStyle = "yellow";
             pellets.forEach((pellet, index) => {
                 ctx.fillRect(pellet.x + box / 4, pellet.y + box / 4, box / 2, box / 2);
-                if (pellet.dir === "UP") pellet.y -= box;
-                else if (pellet.dir === "DOWN") pellet.y += box;
-                else if (pellet.dir === "LEFT") pellet.x -= box;
-                else if (pellet.dir === "RIGHT") pellet.x += box;
+                if (pellet.dir === "UP") pellet.y -= pelletSpeed;
+                else if (pellet.dir === "DOWN") pellet.y += pelletSpeed;
+                else if (pellet.dir === "LEFT") pellet.x -= pelletSpeed;
+                else if (pellet.dir === "RIGHT") pellet.x += pelletSpeed;
                 
                 if (pellet.x < 0 || pellet.y < 0 || pellet.x >= canvas.width || pellet.y >= canvas.height) {
                     pellets.splice(index, 1);
@@ -83,14 +89,19 @@
             
             if (head.x === food.x && head.y === food.y) {
                 food = {
-                    x: Math.floor(Math.random() * 20) * box,
-                    y: Math.floor(Math.random() * 20) * box
+                    x: Math.floor(Math.random() * 40) * box,
+                    y: Math.floor(Math.random() * 40) * box
                 };
             } else {
                 snake.pop();
             }
             
-            if (head.x < 0 || head.y < 0 || head.x >= canvas.width || head.y >= canvas.height || snake.some(seg => seg.x === head.x && seg.y === head.y)) {
+            if (head.x < 0) head.x = canvas.width - box;
+            else if (head.x >= canvas.width) head.x = 0;
+            else if (head.y < 0) head.y = canvas.height - box;
+            else if (head.y >= canvas.height) head.y = 0;
+            
+            if (snake.some(seg => seg.x === head.x && seg.y === head.y)) {
                 alert("Game Over!");
                 document.location.reload();
             }
