@@ -40,6 +40,7 @@
         let pelletSpeed = 40;
         let enemies = [];
         let enemyDirections = [];
+        let enemySpeeds = [];
         
         let gameOver = false;
 
@@ -66,6 +67,7 @@
                 }
                 enemies.push(enemy);
                 enemyDirections.push(["UP", "DOWN", "LEFT", "RIGHT"][Math.floor(Math.random() * 4)]);
+                enemySpeeds.push(1); // Initial speed
             }
         }
 
@@ -73,21 +75,35 @@
 
         function moveEnemies() {
             enemies.forEach((enemy, index) => {
-                let enemyDirection = enemyDirections[index];
+                let speed = enemySpeeds[index];
                 let head = { ...enemy[0] };
-                if (enemyDirection === "UP") head.y -= box;
-                else if (enemyDirection === "DOWN") head.y += box;
-                else if (enemyDirection === "LEFT") head.x -= box;
-                else if (enemyDirection === "RIGHT") head.x += box;
-                
+
+                // AI: Move enemy towards the snake's head
+                if (head.x < snake[0].x) {
+                    head.x += box * speed;
+                } else if (head.x > snake[0].x) {
+                    head.x -= box * speed;
+                }
+
+                if (head.y < snake[0].y) {
+                    head.y += box * speed;
+                } else if (head.y > snake[0].y) {
+                    head.y -= box * speed;
+                }
+
+                // Wrap enemy around screen if it goes out of bounds
                 if (head.x < 0) head.x = canvas.width - box;
                 else if (head.x >= canvas.width) head.x = 0;
                 else if (head.y < 0) head.y = canvas.height - box;
                 else if (head.y >= canvas.height) head.y = 0;
-                
+
                 enemy.unshift(head);
                 enemy.pop();
             });
+        }
+
+        function increaseEnemySpeed() {
+            enemySpeeds = enemySpeeds.map(speed => speed * 1.5);
         }
 
         function changeDirection(event) {
@@ -218,7 +234,11 @@
 
             moveEnemies();
         }
-        
+
+        setInterval(() => {
+            increaseEnemySpeed();
+        }, 5000);  // Every 5 seconds, increase enemy speed
+
         setInterval(draw, 100);
     </script>
 </body>
