@@ -47,7 +47,9 @@
         let enemySpeeds = [];
         
         let gameOver = false;
+        
 
+        
         document.addEventListener("keydown", (event) => {
             if (!gameOver) {
                 event.preventDefault();
@@ -71,11 +73,11 @@
                 }
                 enemies.push(enemy);
                 enemyDirections.push(["UP", "DOWN", "LEFT", "RIGHT"][Math.floor(Math.random() * 4)]);
-                enemySpeeds.push(1); // Initial speed
+                enemySpeeds.push(2); // Initial speed
             }
         }
 
-        setInterval(spawnEnemy, 7000);
+        setInterval(spawnEnemy, 8000);
 
         function randomTurn(index) {
             if (Math.random() < 0.75) {  // 75% chance to change direction
