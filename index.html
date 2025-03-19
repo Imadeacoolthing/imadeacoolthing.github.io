@@ -120,20 +120,35 @@
             // Add new head to snake array
             snake.unshift(head);
 
-            // Remove the last segment of the snake to maintain its length
-            snake.pop();
+            // Check if the snake's head is on the food
+            if (head.x === food.x && head.y === food.y) {
+                // Grow the snake by adding a new segment
+                // We don't remove the tail to simulate growth
+
+                // Generate new food
+                food = {
+                    x: Math.floor(Math.random() * 40) * box,
+                    y: Math.floor(Math.random() * 40) * box
+                };
+            } else {
+                // Remove the last segment of the snake to maintain its length
+                snake.pop();
+            }
 
             ctx.fillStyle = "black";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
+            // Draw food
             ctx.fillStyle = "red";
             ctx.fillRect(food.x, food.y, box, box);
             
+            // Draw snake
             ctx.fillStyle = "lime";
             snake.forEach(segment => {
                 ctx.fillRect(segment.x, segment.y, box, box);
             });
 
+            // Draw pellets
             ctx.fillStyle = "yellow";
             pellets.forEach((pellet, index) => {
                 ctx.fillRect(pellet.x + box / 4, pellet.y + box / 4, box / 2, box / 2);
@@ -151,6 +166,7 @@
                 });
             });
 
+            // Draw enemies
             ctx.fillStyle = "blue";
             enemies.forEach(enemy => {
                 enemy.forEach(segment => {
