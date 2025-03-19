@@ -26,20 +26,43 @@
         const ctx = canvas.getContext("2d");
         
         const box = 20;
-        let snake = [{ x: 400, y: 400 }];
+        let snake = [];
+        for (let i = 0; i < 5; i++) {
+            snake.push({ x: 400 - i * box, y: 400 });
+        }
         let direction = "RIGHT";
         let food = {
             x: Math.floor(Math.random() * 40) * box,
             y: Math.floor(Math.random() * 40) * box
         };
         let pellets = [];
-        let pelletSpeed = 40; // Modifiable bullet speed variable
+        let pelletSpeed = 40;
+        let enemies = [];
         
         document.addEventListener("keydown", (event) => {
-            event.preventDefault(); // Prevent scrolling on iOS
+            event.preventDefault();
             changeDirection(event);
         });
         document.addEventListener("keydown", shootPellet);
+        
+        function spawnEnemy() {
+            if (Math.random() < 0.5) {
+                let enemyLength = Math.max(snake.length - 2, 1);
+                let enemyX, enemyY;
+                do {
+                    enemyX = Math.floor(Math.random() * 40) * box;
+                    enemyY = Math.floor(Math.random() * 40) * box;
+                } while (Math.abs(enemyX - snake[0].x) < 100 || Math.abs(enemyY - snake[0].y) < 100);
+                
+                let enemy = [{ x: enemyX, y: enemyY }];
+                for (let i = 1; i < enemyLength; i++) {
+                    enemy.push({ x: enemyX - i * box, y: enemyY });
+                }
+                enemies.push(enemy);
+            }
+        }
+        
+        setInterval(spawnEnemy, Math.floor(Math.random() * 3000) + 12000);
         
         function changeDirection(event) {
             const key = event.key;
@@ -64,7 +87,7 @@
             ctx.fillRect(food.x, food.y, box, box);
             
             ctx.fillStyle = "lime";
-            snake.forEach((segment) => {
+            snake.forEach(segment => {
                 ctx.fillRect(segment.x, segment.y, box, box);
             });
             
@@ -76,9 +99,23 @@
                 else if (pellet.dir === "LEFT") pellet.x -= pelletSpeed;
                 else if (pellet.dir === "RIGHT") pellet.x += pelletSpeed;
                 
+                enemies.forEach((enemy, eIndex) => {
+                    if (enemy.some(seg => seg.x === pellet.x && seg.y === pellet.y)) {
+                        enemies.splice(eIndex, 1);
+                        pellets.splice(index, 1);
+                    }
+                });
+                
                 if (pellet.x < 0 || pellet.y < 0 || pellet.x >= canvas.width || pellet.y >= canvas.height) {
                     pellets.splice(index, 1);
                 }
+            });
+            
+            ctx.fillStyle = "blue";
+            enemies.forEach(enemy => {
+                enemy.forEach(segment => {
+                    ctx.fillRect(segment.x, segment.y, box, box);
+                });
             });
             
             let head = { ...snake[0] };
@@ -101,7 +138,7 @@
             else if (head.y < 0) head.y = canvas.height - box;
             else if (head.y >= canvas.height) head.y = 0;
             
-            if (snake.some(seg => seg.x === head.x && seg.y === head.y)) {
+            if (snake.some(seg => seg.x === head.x && seg.y === head.y) || enemies.some(enemy => enemy.some(seg => seg.x === head.x && seg.y === head.y))) {
                 alert("Game Over!");
                 document.location.reload();
             }
