@@ -78,17 +78,33 @@
                 let speed = enemySpeeds[index];
                 let head = { ...enemy[0] };
 
-                // AI: Move enemy towards the snake's head
-                if (head.x < snake[0].x) {
-                    head.x += box * speed;
-                } else if (head.x > snake[0].x) {
-                    head.x -= box * speed;
-                }
+                // AI: Move enemy towards the snake's head using 90-degree turns
+                if (head.x !== snake[0].x && head.y !== snake[0].y) {
+                    // If the enemy is not aligned with the snake, move it in the correct axis
+                    if (head.x < snake[0].x) {
+                        head.x += box * speed;
+                    } else if (head.x > snake[0].x) {
+                        head.x -= box * speed;
+                    }
 
-                if (head.y < snake[0].y) {
-                    head.y += box * speed;
-                } else if (head.y > snake[0].y) {
-                    head.y -= box * speed;
+                    if (head.y < snake[0].y) {
+                        head.y += box * speed;
+                    } else if (head.y > snake[0].y) {
+                        head.y -= box * speed;
+                    }
+                } else {
+                    // Move directly towards the snake in either x or y direction
+                    if (head.x < snake[0].x) {
+                        head.x += box * speed;
+                    } else if (head.x > snake[0].x) {
+                        head.x -= box * speed;
+                    }
+
+                    if (head.y < snake[0].y) {
+                        head.y += box * speed;
+                    } else if (head.y > snake[0].y) {
+                        head.y -= box * speed;
+                    }
                 }
 
                 // Wrap enemy around screen if it goes out of bounds
