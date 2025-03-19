@@ -170,6 +170,7 @@
             if (checkSelfCollision()) {
                 gameOver = true;
                 alert("Game Over! You hit yourself.");
+                location.reload();
                 return;
             }
 
@@ -177,6 +178,7 @@
             if (checkEnemyCollision()) {
                 gameOver = true;
                 alert("Game Over! You hit an enemy.");
+                location.reload();
                 return;
             }
 
