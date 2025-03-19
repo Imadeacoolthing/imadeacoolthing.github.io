@@ -31,6 +31,7 @@
             snake.push({ x: 400 - i * box, y: 400 });
         }
         let direction = "RIGHT";
+        let nextDirection = "RIGHT";
         let food = {
             x: Math.floor(Math.random() * 40) * box,
             y: Math.floor(Math.random() * 40) * box
@@ -38,6 +39,7 @@
         let pellets = [];
         let pelletSpeed = 40;
         let enemies = [];
+        let enemyDirections = [];
         
         document.addEventListener("keydown", (event) => {
             event.preventDefault();
@@ -59,17 +61,37 @@
                     enemy.push({ x: enemyX - i * box, y: enemyY });
                 }
                 enemies.push(enemy);
+                enemyDirections.push(["UP", "DOWN", "LEFT", "RIGHT"][Math.floor(Math.random() * 4)]);
             }
         }
         
         setInterval(spawnEnemy, Math.floor(Math.random() * 3000) + 12000);
         
+        function moveEnemies() {
+            enemies.forEach((enemy, index) => {
+                let enemyDirection = enemyDirections[index];
+                let head = { ...enemy[0] };
+                if (enemyDirection === "UP") head.y -= box;
+                else if (enemyDirection === "DOWN") head.y += box;
+                else if (enemyDirection === "LEFT") head.x -= box;
+                else if (enemyDirection === "RIGHT") head.x += box;
+                
+                if (head.x < 0) head.x = canvas.width - box;
+                else if (head.x >= canvas.width) head.x = 0;
+                else if (head.y < 0) head.y = canvas.height - box;
+                else if (head.y >= canvas.height) head.y = 0;
+                
+                enemy.unshift(head);
+                enemy.pop();
+            });
+        }
+        
         function changeDirection(event) {
             const key = event.key;
-            if (key === "ArrowUp" && direction !== "DOWN") direction = "UP";
-            else if (key === "ArrowDown" && direction !== "UP") direction = "DOWN";
-            else if (key === "ArrowLeft" && direction !== "RIGHT") direction = "LEFT";
-            else if (key === "ArrowRight" && direction !== "LEFT") direction = "RIGHT";
+            if (key === "ArrowUp" && direction !== "DOWN") nextDirection = "UP";
+            else if (key === "ArrowDown" && direction !== "UP") nextDirection = "DOWN";
+            else if (key === "ArrowLeft" && direction !== "RIGHT") nextDirection = "LEFT";
+            else if (key === "ArrowRight" && direction !== "LEFT") nextDirection = "RIGHT";
         }
         
         function shootPellet(event) {
@@ -80,6 +102,7 @@
         }
         
         function draw() {
+            direction = nextDirection;
             ctx.fillStyle = "black";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
@@ -102,13 +125,10 @@
                 enemies.forEach((enemy, eIndex) => {
                     if (enemy.some(seg => seg.x === pellet.x && seg.y === pellet.y)) {
                         enemies.splice(eIndex, 1);
+                        enemyDirections.splice(eIndex, 1);
                         pellets.splice(index, 1);
                     }
                 });
-                
-                if (pellet.x < 0 || pellet.y < 0 || pellet.x >= canvas.width || pellet.y >= canvas.height) {
-                    pellets.splice(index, 1);
-                }
             });
             
             ctx.fillStyle = "blue";
@@ -118,32 +138,7 @@
                 });
             });
             
-            let head = { ...snake[0] };
-            if (direction === "UP") head.y -= box;
-            else if (direction === "DOWN") head.y += box;
-            else if (direction === "LEFT") head.x -= box;
-            else if (direction === "RIGHT") head.x += box;
-            
-            if (head.x === food.x && head.y === food.y) {
-                food = {
-                    x: Math.floor(Math.random() * 40) * box,
-                    y: Math.floor(Math.random() * 40) * box
-                };
-            } else {
-                snake.pop();
-            }
-            
-            if (head.x < 0) head.x = canvas.width - box;
-            else if (head.x >= canvas.width) head.x = 0;
-            else if (head.y < 0) head.y = canvas.height - box;
-            else if (head.y >= canvas.height) head.y = 0;
-            
-            if (snake.some(seg => seg.x === head.x && seg.y === head.y) || enemies.some(enemy => enemy.some(seg => seg.x === head.x && seg.y === head.y))) {
-                alert("Game Over!");
-                document.location.reload();
-            }
-            
-            snake.unshift(head);
+            moveEnemies();
         }
         
         setInterval(draw, 100);
