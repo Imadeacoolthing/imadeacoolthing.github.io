@@ -34,7 +34,7 @@
             health: 100,
             swordSwinging: false,
             swordAngle: 0,
-            bombCooldown: false
+            bombCooldown: 0
         };
 
         const enemies = [];
@@ -51,26 +51,22 @@
         function spawnEnemy() {
             const spawnChance = Math.random();
             if (spawnChance < 0.5) {
-                enemies.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    width: 30,
-                    height: 30,
-                    speed: 2,
-                    health: 50
-                });
+                enemies.push(createEnemy());
             } else if (spawnChance < 0.6) { 
-                for (let i = 0; i < 2; i++) {
-                    enemies.push({
-                        x: Math.random() * canvas.width,
-                        y: Math.random() * canvas.height,
-                        width: 30,
-                        height: 30,
-                        speed: 2,
-                        health: 50
-                    });
-                }
+                enemies.push(createEnemy());
+                enemies.push(createEnemy());
             }
+        }
+
+        function createEnemy() {
+            return {
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                width: 30,
+                height: 30,
+                speed: 2,
+                health: 50
+            };
         }
 
         function startSpawningEnemies() {
@@ -82,6 +78,10 @@
             player.y += player.dy;
             player.x = Math.max(0, Math.min(canvas.width - player.width, player.x));
             player.y = Math.max(0, Math.min(canvas.height - player.height, player.y));
+            
+            if (player.bombCooldown > 0) {
+                player.bombCooldown -= 1 / 60;
+            }
         }
 
         function drawPlayer() {
@@ -90,10 +90,11 @@
         }
 
         function updateEnemies() {
-            enemies.forEach(enemy => {
+            enemies.forEach((enemy, index) => {
                 let angle = Math.atan2(player.y - enemy.y, player.x - enemy.x);
                 enemy.x += Math.cos(angle) * enemy.speed;
                 enemy.y += Math.sin(angle) * enemy.speed;
+                
                 if (
                     player.x < enemy.x + enemy.width &&
                     player.x + player.width > enemy.x &&
@@ -128,11 +129,46 @@
             }
         }
 
+        function placeBomb() {
+            if (player.bombCooldown <= 0) {
+                bombs.push({ x: player.x, y: player.y, timer: 3 });
+                player.bombCooldown = 10;
+            }
+        }
+
+        function updateBombs() {
+            bombs.forEach((bomb, index) => {
+                bomb.timer -= 1 / 60;
+                if (bomb.timer <= 0) {
+                    bombs.splice(index, 1);
+                    enemies.forEach((enemy, eIndex) => {
+                        if (Math.hypot(enemy.x - bomb.x, enemy.y - bomb.y) < 100) {
+                            enemies.splice(eIndex, 1);
+                            score += 10;
+                        }
+                    });
+                    if (Math.hypot(player.x - bomb.x, player.y - bomb.y) < 100) {
+                        player.health -= 20;
+                    }
+                }
+            });
+        }
+
+        function drawBombs() {
+            ctx.fillStyle = 'black';
+            bombs.forEach(bomb => {
+                ctx.beginPath();
+                ctx.arc(bomb.x, bomb.y, 10, 0, Math.PI * 2);
+                ctx.fill();
+            });
+        }
+
         function drawHUD() {
             ctx.fillStyle = 'black';
             ctx.font = '20px Arial';
             ctx.fillText(`Health: ${Math.max(0, Math.floor(player.health))}`, 10, 20);
             ctx.fillText(`Score: ${score}`, 10, 40);
+            ctx.fillText(`Bomb Cooldown: ${player.bombCooldown > 0 ? player.bombCooldown.toFixed(1) + 's' : 'Ready'}`, 10, 60);
         }
 
         function keyDown(e) {
@@ -158,9 +194,11 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             updatePlayer();
             updateEnemies();
+            updateBombs();
             drawPlayer();
             drawEnemies();
             drawSword();
+            drawBombs();
             drawHUD();
             if (player.health > 0) {
                 requestAnimationFrame(gameLoop);
