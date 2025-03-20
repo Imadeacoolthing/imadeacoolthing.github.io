@@ -65,12 +65,13 @@
                 width: 30,
                 height: 30,
                 speed: 2,
-                health: 50
+                health: 50 + Math.floor(score / 30), // Increase health every 30 points
+                knockback: 0
             };
         }
 
         function startSpawningEnemies() {
-            setInterval(spawnEnemy, 5000);
+            setInterval(spawnEnemy, 3000); // Increase spawn rate to 3 seconds
         }
 
         function updatePlayer() {
@@ -94,21 +95,31 @@
                 let angle = Math.atan2(player.y - enemy.y, player.x - enemy.x);
                 enemy.x += Math.cos(angle) * enemy.speed;
                 enemy.y += Math.sin(angle) * enemy.speed;
-                
+
+                if (Math.hypot(player.x - enemy.x, player.y - enemy.y) < player.width) {
+                    player.health -= 0.5;
+                    // Knockback effect for the player
+                    player.x += Math.cos(angle) * 10;
+                    player.y += Math.sin(angle) * 10;
+                }
+
                 if (
                     player.x < enemy.x + enemy.width &&
                     player.x + player.width > enemy.x &&
                     player.y < enemy.y + enemy.height &&
                     player.y + player.height > enemy.y
                 ) {
-                    player.health -= 0.5;
+                    // Knockback effect for the enemy
+                    enemy.x -= Math.cos(angle) * enemy.knockback;
+                    enemy.y -= Math.sin(angle) * enemy.knockback;
                 }
             });
         }
 
         function drawEnemies() {
-            ctx.fillStyle = 'red';
             enemies.forEach(enemy => {
+                let color = `rgb(${Math.min(255, 255 - enemy.health)}, 0, 0)`; // Color based on health
+                ctx.fillStyle = color;
                 ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
             });
         }
@@ -172,6 +183,37 @@
             if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') player.dx = 0;
         }
 
+        function placeBomb() {
+            if (player.bombCooldown <= 0) {
+                bombs.push({
+                    x: player.x,
+                    y: player.y,
+                    radius: 30,
+                    damage: 50
+                });
+                player.bombCooldown = 3; // 3 seconds cooldown
+            }
+        }
+
+        function drawBombs() {
+            bombs.forEach((bomb, index) => {
+                ctx.beginPath();
+                ctx.arc(bomb.x, bomb.y, bomb.radius, 0, Math.PI * 2);
+                ctx.fillStyle = 'yellow';
+                ctx.fill();
+                // Check for enemy hit by bomb
+                enemies.forEach((enemy, enemyIndex) => {
+                    if (Math.hypot(bomb.x - enemy.x, bomb.y - enemy.y) < bomb.radius) {
+                        enemy.health -= bomb.damage;
+                        if (enemy.health <= 0) {
+                            enemies.splice(enemyIndex, 1);
+                            score += 10;
+                        }
+                    }
+                });
+            });
+        }
+
         function gameLoop() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             updatePlayer();
@@ -179,6 +221,7 @@
             updateSword();
             drawPlayer();
             drawEnemies();
+            drawBombs();
             drawSword();
             drawHUD();
             if (player.health > 0) {
