@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Balatro Clone</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        #game { display: flex; flex-direction: column; align-items: center; margin-top: 20px; }
+        .card { display: inline-block; width: 50px; height: 70px; border: 1px solid black; margin: 5px; text-align: center; line-height: 70px; cursor: pointer; }
+        #hand, #selection { margin: 20px; display: flex; justify-content: center; flex-wrap: wrap; }
+        .selected { background-color: yellow; }
+    </style>
+</head>
+<body>
+    <h1>Balatro Clone</h1>
+    <div id="game">
+        <div id="selection"></div>
+        <button onclick="confirmSelection()">Confirm Selection</button>
+        <p id="selection-warning" style="color: red; display: none;">Please select at least 1 card!</p>
+        <div id="hand"></div>
+        <button onclick="playHand()" disabled>Play Hand</button>
+        <p id="score">Score: 0</p>
+    </div>
+
+    <script>
+        const suits = ['♠', '♥', '♦', '♣'];
+        const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+        let score = 0;
+        let selectedCards = [];
+        let availableCards = [];
+
+        function getRandomCard() {
+            const suit = suits[Math.floor(Math.random() * suits.length)];
+            const rank = ranks[Math.floor(Math.random() * ranks.length)];
+            return { suit, rank };
+        }
+
+        function dealSelection() {
+            availableCards = [];
+            for (let i = 0; i < 9; i++) {
+                availableCards.push(getRandomCard());
+            }
+            selectedCards = [];
+            displaySelection();
+        }
+
+        function displaySelection() {
+            const selectionDiv = document.getElementById('selection');
+            selectionDiv.innerHTML = '';
+            availableCards.forEach((card, index) => {
+                const cardDiv = document.createElement('div');
+                cardDiv.classList.add('card');
+                cardDiv.textContent = `${card.rank}${card.suit}`;
+                cardDiv.onclick = () => selectCard(card, cardDiv);
+                selectionDiv.appendChild(cardDiv);
+            });
+        }
+
+        function selectCard(card, cardDiv) {
+            if (selectedCards.includes(card)) {
+                selectedCards = selectedCards.filter(c => c !== card);
+                cardDiv.classList.remove('selected');
+            } else if (selectedCards.length < 5) {
+                selectedCards.push(card);
+                cardDiv.classList.add('selected');
+            }
+        }
+
+        function confirmSelection() {
+            const warning = document.getElementById('selection-warning');
+            if (selectedCards.length === 0) {
+                warning.style.display = 'block';  // Show warning if no cards are selected
+            } else {
+                warning.style.display = 'none';
+                displayHand(selectedCards);
+                document.querySelector("button[onclick='playHand()']").disabled = false;
+            }
+        }
+
+        function displayHand(hand) {
+            const handDiv = document.getElementById('hand');
+            handDiv.innerHTML = '';
+            hand.forEach(card => {
+                const cardDiv = document.createElement('div');
+                cardDiv.classList.add('card');
+                cardDiv.textContent = `${card.rank}${card.suit}`;
+                handDiv.appendChild(cardDiv);
+            });
+        }
+
+        function evaluateHand(hand) {
+            let rankCount = {};
+            hand.forEach(card => {
+                rankCount[card.rank] = (rankCount[card.rank] || 0) + 1;
+            });
+            
+            const counts = Object.values(rankCount);
+            if (counts.includes(4)) return 50; // Four of a Kind
+            if (counts.includes(3) && counts.includes(2)) return 25; // Full House
+            if (counts.includes(3)) return 10; // Three of a Kind
+            if (counts.filter(count => count === 2).length === 2) return 5; // Two Pair
+            if (counts.includes(2)) return 2; // One Pair
+            return 0; // High card
+        }
+
+        function playHand() {
+            const handScore = evaluateHand(selectedCards);
+            score += handScore;
+            document.getElementById('score').textContent = `Score: ${score}`;
+            selectedCards = [];
+            document.querySelector("button[onclick='playHand()']").disabled = true;
+            dealSelection();
+        }
+
+        dealSelection();
+    </script>
+</body>
+</html>
