@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top-Down Sword Game</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+        canvas {
+            background-color: #e0e0e0;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // Player settings
+        const player = {
+            x: canvas.width / 2,
+            y: canvas.height / 2,
+            width: 30,
+            height: 30,
+            speed: 5,
+            dx: 0,
+            dy: 0,
+            swordSwinging: false,
+            swordAngle: 0
+        };
+
+        // Enemy settings
+        const enemies = [];
+        const numEnemies = 5;
+
+        // Sword settings
+        const sword = {
+            length: 50,
+            width: 5
+        };
+
+        // Game loop settings
+        let lastTime = 0;
+
+        function createEnemies() {
+            for (let i = 0; i < numEnemies; i++) {
+                enemies.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    width: 30,
+                    height: 30,
+                    dx: Math.random() * 2 - 1,
+                    dy: Math.random() * 2 - 1
+                });
+            }
+        }
+
+        // Update player movement
+        function updatePlayer() {
+            player.x += player.dx;
+            player.y += player.dy;
+            
+            // Prevent the player from going off screen
+            if (player.x < 0) player.x = 0;
+            if (player.y < 0) player.y = 0;
+            if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
+            if (player.y + player.height > canvas.height) player.y = canvas.height - player.height;
+        }
+
+        // Draw player
+        function drawPlayer() {
+            ctx.fillStyle = 'blue';
+            ctx.fillRect(player.x, player.y, player.width, player.height);
+        }
+
+        // Update enemies
+        function updateEnemies() {
+            enemies.forEach(enemy => {
+                enemy.x += enemy.dx;
+                enemy.y += enemy.dy;
+                
+                // Prevent enemies from going off screen
+                if (enemy.x < 0 || enemy.x + enemy.width > canvas.width) enemy.dx = -enemy.dx;
+                if (enemy.y < 0 || enemy.y + enemy.height > canvas.height) enemy.dy = -enemy.dy;
+            });
+        }
+
+        // Draw enemies
+        function drawEnemies() {
+            ctx.fillStyle = 'red';
+            enemies.forEach(enemy => {
+                ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
+            });
+        }
+
+        // Swing sword
+        function drawSword() {
+            if (player.swordSwinging) {
+                const swordX = player.x + player.width / 2;
+                const swordY = player.y + player.height / 2;
+                const swordEndX = swordX + sword.length * Math.cos(player.swordAngle);
+                const swordEndY = swordY + sword.length * Math.sin(player.swordAngle);
+                
+                ctx.strokeStyle = 'black';
+                ctx.lineWidth = sword.width;
+                ctx.beginPath();
+                ctx.moveTo(swordX, swordY);
+                ctx.lineTo(swordEndX, swordEndY);
+                ctx.stroke();
+            }
+        }
+
+        // Detect sword hit
+        function detectSwordHit() {
+            enemies.forEach(enemy => {
+                const distX = Math.abs(enemy.x + enemy.width / 2 - (player.x + player.width / 2));
+                const distY = Math.abs(enemy.y + enemy.height / 2 - (player.y + player.height / 2));
+                if (distX < player.width && distY < player.height) {
+                    // Simple collision detection
+                    console.log('Enemy hit!');
+                }
+            });
+        }
+
+        // Handle keydown events
+        function keyDown(e) {
+            if (e.key === 'ArrowUp') player.dy = -player.speed;
+            if (e.key === 'ArrowDown') player.dy = player.speed;
+            if (e.key === 'ArrowLeft') player.dx = -player.speed;
+            if (e.key === 'ArrowRight') player.dx = player.speed;
+            if (e.key === ' ') {
+                player.swordSwinging = true;
+                player.swordAngle = Math.random() * Math.PI * 2;  // Random angle for sword swing
+            }
+        }
+
+        // Handle keyup events
+        function keyUp(e) {
+            if (e.key === 'ArrowUp' || e.key === 'ArrowDown') player.dy = 0;
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') player.dx = 0;
+            if (e.key === ' ') {
+                player.swordSwinging = false;
+            }
+        }
+
+        // Main game loop
+        function gameLoop(timestamp) {
+            const deltaTime = timestamp - lastTime;
+            lastTime = timestamp;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            updatePlayer();
+            updateEnemies();
+            detectSwordHit();
+            drawPlayer();
+            drawEnemies();
+            drawSword();
+            
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Initialize game
+        createEnemies();
+        window.addEventListener('keydown', keyDown);
+        window.addEventListener('keyup', keyUp);
+        requestAnimationFrame(gameLoop);
+    </script>
+</body>
+</html>
