@@ -66,7 +66,8 @@
                 height: 30,
                 speed: 2,
                 health: 50 + Math.floor(score / 30), // Increase health every 30 points
-                knockback: 0
+                knockback: 10, // Increased knockback
+                damage: Math.floor(Math.random() * 3) + 9 // Damage between 9 and 11
             };
         }
 
@@ -97,10 +98,10 @@
                 enemy.y += Math.sin(angle) * enemy.speed;
 
                 if (Math.hypot(player.x - enemy.x, player.y - enemy.y) < player.width) {
-                    player.health -= 0.5;
+                    player.health -= enemy.damage;
                     // Knockback effect for the player
-                    player.x += Math.cos(angle) * 10;
-                    player.y += Math.sin(angle) * 10;
+                    player.x += Math.cos(angle) * enemy.knockback * 2; // Increase knockback effect
+                    player.y += Math.sin(angle) * enemy.knockback * 2; // Increase knockback effect
                 }
 
                 if (
@@ -189,7 +190,8 @@
                     x: player.x,
                     y: player.y,
                     radius: 30,
-                    damage: 50
+                    damage: 50,
+                    timeToExplode: 3 // 3 seconds timer
                 });
                 player.bombCooldown = 3; // 3 seconds cooldown
             }
@@ -199,18 +201,25 @@
             bombs.forEach((bomb, index) => {
                 ctx.beginPath();
                 ctx.arc(bomb.x, bomb.y, bomb.radius, 0, Math.PI * 2);
-                ctx.fillStyle = 'yellow';
+                ctx.fillStyle = 'black';
                 ctx.fill();
-                // Check for enemy hit by bomb
-                enemies.forEach((enemy, enemyIndex) => {
-                    if (Math.hypot(bomb.x - enemy.x, bomb.y - enemy.y) < bomb.radius) {
-                        enemy.health -= bomb.damage;
-                        if (enemy.health <= 0) {
-                            enemies.splice(enemyIndex, 1);
-                            score += 10;
+
+                // Countdown and explode after 3 seconds
+                bomb.timeToExplode -= 1 / 60;
+                if (bomb.timeToExplode <= 0) {
+                    // Apply explosion damage to enemies
+                    enemies.forEach((enemy, enemyIndex) => {
+                        if (Math.hypot(bomb.x - enemy.x, bomb.y - enemy.y) < bomb.radius) {
+                            enemy.health -= bomb.damage;
+                            if (enemy.health <= 0) {
+                                enemies.splice(enemyIndex, 1);
+                                score += 10;
+                            }
                         }
-                    }
-                });
+                    });
+                    // Remove bomb after explosion
+                    bombs.splice(index, 1);
+                }
             });
         }
 
