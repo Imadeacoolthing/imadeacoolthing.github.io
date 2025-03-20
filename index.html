@@ -28,6 +28,7 @@
     <script>
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
+
         var score = 0;
         const box = 20;
         let snake = [];
@@ -45,11 +46,10 @@
         let enemies = [];
         let enemyDirections = [];
         let enemySpeeds = [];
-        
-        let gameOver = false;
-        
+        let enemyHealth = [];
 
-        
+        let gameOver = false;
+
         document.addEventListener("keydown", (event) => {
             if (!gameOver) {
                 event.preventDefault();
@@ -57,6 +57,10 @@
             }
         });
         document.addEventListener("keydown", shootPellet);
+
+        function getEnemyMaxHealth() {
+            return 1 + Math.floor(score / 25);  // +1 health every 25 points
+        }
 
         function spawnEnemy() {
             if (Math.random() < 0.75) {
@@ -73,14 +77,15 @@
                 }
                 enemies.push(enemy);
                 enemyDirections.push(["UP", "DOWN", "LEFT", "RIGHT"][Math.floor(Math.random() * 4)]);
-                enemySpeeds.push(1); // Initial speed
+                enemySpeeds.push(1);  
+                enemyHealth.push(getEnemyMaxHealth());  // Assign initial health
             }
         }
 
         setInterval(spawnEnemy, 8000);
 
         function randomTurn(index) {
-            if (Math.random() < 0.75) {  // 75% chance to change direction
+            if (Math.random() < 0.75) {  
                 const directions = ["UP", "DOWN", "LEFT", "RIGHT"];
                 let randomDirection = directions[Math.floor(Math.random() * 4)];
                 enemyDirections[index] = randomDirection;
@@ -92,13 +97,11 @@
                 let speed = enemySpeeds[index];
                 let head = { ...enemy[0] };
 
-                // Move enemy in the current direction
                 if (enemyDirections[index] === "UP") head.y -= box * speed;
                 else if (enemyDirections[index] === "DOWN") head.y += box * speed;
                 else if (enemyDirections[index] === "LEFT") head.x -= box * speed;
                 else if (enemyDirections[index] === "RIGHT") head.x += box * speed;
 
-                // Wrap enemy around screen if it goes out of bounds
                 if (head.x < 0) head.x = canvas.width - box;
                 else if (head.x >= canvas.width) head.x = 0;
                 else if (head.y < 0) head.y = canvas.height - box;
@@ -107,10 +110,6 @@
                 enemy.unshift(head);
                 enemy.pop();
             });
-        }
-
-        function increaseEnemySpeed() {
-            enemySpeeds = enemySpeeds.map(speed => speed * 1.5);
         }
 
         function changeDirection(event) {
@@ -128,115 +127,64 @@
             }
         }
 
-        function checkSelfCollision() {
-            // Check if snake's head collides with any of its body segments
-            for (let i = 1; i < snake.length; i++) {
-                if (snake[i].x === snake[0].x && snake[i].y === snake[0].y) {
-                    return true; // Snake hits itself
-                }
-            }
-            return false;
-        }
-
-        function checkEnemyCollision() {
-            // Check if snake's head collides with any enemy
-            for (let enemy of enemies) {
-                for (let segment of enemy) {
-                    if (snake[0].x === segment.x && snake[0].y === segment.y) {
-                        return true; // Snake hits enemy
-                    }
-                }
-            }
-            return false;
-        }
-
         function draw() {
             if (gameOver) return;
             document.getElementById("scoredisp").innerHTML = score;
             direction = nextDirection;
 
-            // Move the snake
             let head = { ...snake[0] };
             if (direction === "UP") head.y -= box;
             else if (direction === "DOWN") head.y += box;
             else if (direction === "LEFT") head.x -= box;
             else if (direction === "RIGHT") head.x += box;
 
-            // Wrap snake around screen if it goes out of bounds
             if (head.x < 0) head.x = canvas.width - box;
             else if (head.x >= canvas.width) head.x = 0;
             else if (head.y < 0) head.y = canvas.height - box;
             else if (head.y >= canvas.height) head.y = 0;
 
-            // Check for self-collision
-            if (checkSelfCollision()) {
-                gameOver = true;
-                alert("Game Over! You hit yourself.");
-                location.reload();
-                return;
-            }
-
-            // Check for enemy collision
-            if (checkEnemyCollision()) {
-                gameOver = true;
-                alert("Game Over! You hit an enemy.");
-                location.reload();
-                return;
-            }
-
-            // Add new head to snake array
             snake.unshift(head);
-
-            // Check if the snake's head is on the food
-            if (head.x === food.x && head.y === food.y) {
-                // Grow the snake by adding a new segment
-                // We don't remove the tail to simulate growth
-                score += 1;
-                // Generate new food
-                food = {
-                    x: Math.floor(Math.random() * 40) * box,
-                    y: Math.floor(Math.random() * 40) * box
-                };
-            } else {
-                // Remove the last segment of the snake to maintain its length
-                snake.pop();
-            }
+            snake.pop();
 
             ctx.fillStyle = "black";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            // Draw food
             ctx.fillStyle = "red";
             ctx.fillRect(food.x, food.y, box, box);
             
-            // Draw snake
             ctx.fillStyle = "lime";
             snake.forEach(segment => {
                 ctx.fillRect(segment.x, segment.y, box, box);
             });
 
-            // Draw pellets
             ctx.fillStyle = "yellow";
-            pellets.forEach((pellet, index) => {
+            pellets.forEach((pellet, pIndex) => {
                 ctx.fillRect(pellet.x + box / 4, pellet.y + box / 4, box / 2, box / 2);
                 if (pellet.dir === "UP") pellet.y -= pelletSpeed;
                 else if (pellet.dir === "DOWN") pellet.y += pelletSpeed;
                 else if (pellet.dir === "LEFT") pellet.x -= pelletSpeed;
                 else if (pellet.dir === "RIGHT") pellet.x += pelletSpeed;
-                
+
                 enemies.forEach((enemy, eIndex) => {
                     if (enemy.some(seg => seg.x === pellet.x && seg.y === pellet.y)) {
-                        enemies.splice(eIndex, 1);
-                        enemyDirections.splice(eIndex, 1);
-                        pellets.splice(index, 1);
-                        score += 5;
+                        enemyHealth[eIndex] -= 1;
+                        pellets.splice(pIndex, 1);
+
+                        if (enemyHealth[eIndex] <= 0) {
+                            enemies.splice(eIndex, 1);
+                            enemyDirections.splice(eIndex, 1);
+                            enemyHealth.splice(eIndex, 1);
+                            score += 5;
+                        }
                     }
                 });
             });
 
-            // Draw enemies
-            ctx.fillStyle = "blue";
-            enemies.forEach(enemy => {
+            enemies.forEach((enemy, index) => {
+                let healthRatio = enemyHealth[index] / getEnemyMaxHealth();
+                let colorValue = Math.floor(255 * healthRatio);
+                ctx.fillStyle = `rgb(${colorValue}, ${colorValue}, 255)`;
+
                 enemy.forEach(segment => {
                     ctx.fillRect(segment.x, segment.y, box, box);
                 });
@@ -245,11 +193,7 @@
             moveEnemies();
         }
 
-        setInterval(() => {
-            // Every 1 second, make a random 50% chance for enemies to turn
-            enemies.forEach((_, index) => randomTurn(index));
-        }, 1000);  // Every 2 second
-
+        setInterval(() => enemies.forEach((_, i) => randomTurn(i)), 1000);
         setInterval(draw, 100);
     </script>
 </body>
