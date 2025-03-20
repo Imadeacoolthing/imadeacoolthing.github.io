@@ -37,7 +37,7 @@
         }
         let direction = "RIGHT";
         let nextDirection = "RIGHT";
-        let food = spawnFood();  // Food is now generated properly.
+        let food = spawnFood();  
         let pellets = [];
         let pelletSpeed = 20;
         let enemies = [];
@@ -169,28 +169,6 @@
 
             ctx.fillStyle = "lime";
             snake.forEach(segment => ctx.fillRect(segment.x, segment.y, box, box));
-
-            ctx.fillStyle = "yellow";
-            pellets.forEach((pellet, pIndex) => {
-                ctx.fillRect(pellet.x + box / 4, pellet.y + box / 4, box / 2, box / 2);
-                if (pellet.dir === "UP") pellet.y -= pelletSpeed;
-                else if (pellet.dir === "DOWN") pellet.y += pelletSpeed;
-                else if (pellet.dir === "LEFT") pellet.x -= pelletSpeed;
-                else if (pellet.dir === "RIGHT") pellet.x += pelletSpeed;
-
-                enemies.forEach((enemy, eIndex) => {
-                    if (enemy.some(seg => seg.x === pellet.x && seg.y === pellet.y)) {
-                        enemyHealth[eIndex]--;
-                        pellets.splice(pIndex, 1);
-
-                        if (enemyHealth[eIndex] <= 0) {
-                            enemies.splice(eIndex, 1);
-                            enemyHealth.splice(eIndex, 1);
-                            score += 5;
-                        }
-                    }
-                });
-            });
 
             enemies.forEach((enemy, index) => {
                 let healthRatio = enemyHealth[index] / getEnemyMaxHealth();
