@@ -41,9 +41,9 @@
         const bombs = [];
 
         const sword = {
-            length: 50,
-            width: 5,
-            angleSpeed: 0.3
+            length: 70,
+            width: 8,
+            angleSpeed: 0.2
         };
 
         let score = 0;
@@ -113,9 +113,25 @@
             });
         }
 
-        function drawSword() {
+        function updateSword() {
             if (player.swordSwinging) {
                 player.swordAngle += sword.angleSpeed;
+                enemies.forEach((enemy, index) => {
+                    let swordX = player.x + player.width / 2 + sword.length * Math.cos(player.swordAngle);
+                    let swordY = player.y + player.height / 2 + sword.length * Math.sin(player.swordAngle);
+                    if (Math.hypot(enemy.x - swordX, enemy.y - swordY) < 40) {
+                        enemy.health -= 20;
+                        if (enemy.health <= 0) {
+                            enemies.splice(index, 1);
+                            score += 10;
+                        }
+                    }
+                });
+            }
+        }
+
+        function drawSword() {
+            if (player.swordSwinging) {
                 const swordX = player.x + player.width / 2;
                 const swordY = player.y + player.height / 2;
                 const swordEndX = swordX + sword.length * Math.cos(player.swordAngle);
@@ -127,40 +143,6 @@
                 ctx.lineTo(swordEndX, swordEndY);
                 ctx.stroke();
             }
-        }
-
-        function placeBomb() {
-            if (player.bombCooldown <= 0) {
-                bombs.push({ x: player.x, y: player.y, timer: 3 });
-                player.bombCooldown = 10;
-            }
-        }
-
-        function updateBombs() {
-            bombs.forEach((bomb, index) => {
-                bomb.timer -= 1 / 60;
-                if (bomb.timer <= 0) {
-                    bombs.splice(index, 1);
-                    enemies.forEach((enemy, eIndex) => {
-                        if (Math.hypot(enemy.x - bomb.x, enemy.y - bomb.y) < 100) {
-                            enemies.splice(eIndex, 1);
-                            score += 10;
-                        }
-                    });
-                    if (Math.hypot(player.x - bomb.x, player.y - bomb.y) < 100) {
-                        player.health -= 20;
-                    }
-                }
-            });
-        }
-
-        function drawBombs() {
-            ctx.fillStyle = 'black';
-            bombs.forEach(bomb => {
-                ctx.beginPath();
-                ctx.arc(bomb.x, bomb.y, 10, 0, Math.PI * 2);
-                ctx.fill();
-            });
         }
 
         function drawHUD() {
@@ -178,7 +160,7 @@
             if (e.key === 'ArrowRight') player.dx = player.speed;
             if (e.key === 'z') {
                 player.swordSwinging = true;
-                setTimeout(() => player.swordSwinging = false, 300);
+                setTimeout(() => player.swordSwinging = false, 500);
             }
             if (e.key === 'x') {
                 placeBomb();
@@ -194,11 +176,10 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             updatePlayer();
             updateEnemies();
-            updateBombs();
+            updateSword();
             drawPlayer();
             drawEnemies();
             drawSword();
-            drawBombs();
             drawHUD();
             if (player.health > 0) {
                 requestAnimationFrame(gameLoop);
