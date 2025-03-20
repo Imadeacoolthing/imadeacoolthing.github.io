@@ -20,98 +20,8 @@
         #beans {
             color: white;
         }
-        .crt::before {
-          content: " ";
-          display: block;
-          position: absolute;
-          top: 0;
-          left: 0;
-          bottom: 0;
-          right: 0;
-          background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-          z-index: 2;
-          background-size: 100% 2px, 3px 100%;
-          pointer-events: none;
-        }
-        @keyframes flicker {
-  0% {
-  opacity: 0.27861;
-  }
-  5% {
-  opacity: 0.34769;
-  }
-  10% {
-  opacity: 0.23604;
-  }
-  15% {
-  opacity: 0.90626;
-  }
-  20% {
-  opacity: 0.18128;
-  }
-  25% {
-  opacity: 0.83891;
-  }
-  30% {
-  opacity: 0.65583;
-  }
-  35% {
-  opacity: 0.67807;
-  }
-  40% {
-  opacity: 0.26559;
-  }
-  45% {
-  opacity: 0.84693;
-  }
-  50% {
-  opacity: 0.96019;
-  }
-  55% {
-  opacity: 0.08594;
-  }
-  60% {
-  opacity: 0.20313;
-  }
-  65% {
-  opacity: 0.71988;
-  }
-  70% {
-  opacity: 0.53455;
-  }
-  75% {
-  opacity: 0.37288;
-  }
-  80% {
-  opacity: 0.71428;
-  }
-  85% {
-  opacity: 0.70419;
-  }
-  90% {
-  opacity: 0.7003;
-  }
-  95% {
-  opacity: 0.36108;
-  }
-  100% {
-  opacity: 0.24387;
-  }
-}
-
-.crt::after {
-  content: " ";
-  display: block;
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  background: rgba(18, 16, 16, 0.1);
-  opacity: 0;
-  z-index: 2;
-  pointer-events: none;
-  animation: flicker 0.15s infinite;
+       
+  
 }
         
     </style>
@@ -119,6 +29,7 @@
 <body>
     <canvas id="gameCanvas" width="800" height="800" class="crt"></canvas>
     <h1 id="beans">SCORE: <span id="scoredisp">0</span></h1>
+    <script src="glfx.js"></script>
     <script>
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
@@ -345,6 +256,59 @@
         }, 1000);  // Every 2 second
 
         setInterval(draw, 100);
+        var lines = new Image();
+lines.src = 'https://i.sstatic.net/QPN59.png';
+
+window.addEventListener('load', fakeCRT, false);
+
+function fakeCRT() {
+    var glcanvas, source, srcctx, texture, w, h, hw, hh, w75;
+
+    // Try to create a WebGL canvas (will fail if WebGL isn't supported)
+    try {
+       glcanvas = fx.canvas();
+    } catch (e) {return;}
+
+    // Assumes the first canvas tag in the document is the 2D game, but
+    // obviously we could supply a specific canvas element here.
+    source = document.getElementsByTagName('canvas')[0];
+    srcctx = source.getContext('2d');
+
+    // This tells glfx what to use as a source image
+    texture = glcanvas.texture(source);
+
+    // Just setting up some details to tweak the bulgePinch effect
+    w = source.width;
+    h = source.height;
+    hw = w / 2;
+    hh = h / 2;
+    w75 = w * 0.75;
+
+    // Hide the source 2D canvas and put the WebGL Canvas in its place
+    source.parentNode.insertBefore(glcanvas, source);
+    source.style.display = 'none';
+    glcanvas.className = source.className;
+    glcanvas.id = source.id;
+    source.id = 'old_' + source.id;
+
+    // It is pretty silly to setup a separate animation timer loop here, but
+    // this lets us avoid monkeying with the source game's code.
+    // It would make way more sense to do the following directly in the source
+    // game's draw function in terms of performance.
+    setInterval(function () {
+        // Give the source scanlines
+        srcctx.drawImage(lines, 0, 0, w, h);
+
+        // Load the latest source frame
+        texture.loadContentsOf(source);
+
+        // Apply WebGL magic
+        glcanvas.draw(texture)
+            .bulgePinch(hw, hh, w75, 0.12)
+            .vignette(0.25, 0.74)
+            .update();
+    }, Math.floor(1000 / 40));
+}
     </script>
 </body>
 </html>
