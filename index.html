@@ -37,10 +37,7 @@
         }
         let direction = "RIGHT";
         let nextDirection = "RIGHT";
-        let food = {
-            x: Math.floor(Math.random() * 40) * box,
-            y: Math.floor(Math.random() * 40) * box
-        };
+        let food = spawnFood();  // Food is now generated properly.
         let pellets = [];
         let pelletSpeed = 20;
         let enemies = [];
@@ -59,36 +56,49 @@
         document.addEventListener("keydown", shootPellet);
 
         function getEnemyMaxHealth() {
-            return 1 + Math.floor(score / 25);  // +1 health every 25 points
+            return 1 + Math.floor(score / 25);
+        }
+
+        function spawnFood() {
+            let newFood;
+            let validPosition = false;
+
+            while (!validPosition) {
+                newFood = {
+                    x: Math.floor(Math.random() * 40) * box,
+                    y: Math.floor(Math.random() * 40) * box
+                };
+
+                validPosition = !snake.some(seg => seg.x === newFood.x && seg.y === newFood.y) &&
+                                !enemies.some(enemy => enemy.some(seg => seg.x === newFood.x && seg.y === newFood.y));
+            }
+
+            return newFood;
         }
 
         function spawnEnemy() {
             if (Math.random() < 0.75) {
-                let enemyLength = Math.max(snake.length - 2, 1);
                 let enemyX, enemyY;
                 do {
                     enemyX = Math.floor(Math.random() * 40) * box;
                     enemyY = Math.floor(Math.random() * 40) * box;
-                } while (Math.abs(enemyX - snake[0].x) < 100 || Math.abs(enemyY - snake[0].y) < 100);
-                
+                } while (snake.some(seg => seg.x === enemyX && seg.y === enemyY) ||
+                         enemies.some(enemy => enemy.some(seg => seg.x === enemyX && seg.y === enemyY)));
+
                 let enemy = [{ x: enemyX, y: enemyY }];
-                for (let i = 1; i < enemyLength; i++) {
-                    enemy.push({ x: enemyX - i * box, y: enemyY });
-                }
                 enemies.push(enemy);
                 enemyDirections.push(["UP", "DOWN", "LEFT", "RIGHT"][Math.floor(Math.random() * 4)]);
-                enemySpeeds.push(1);  
-                enemyHealth.push(getEnemyMaxHealth());  // Assign initial health
+                enemySpeeds.push(1);
+                enemyHealth.push(getEnemyMaxHealth());
             }
         }
 
         setInterval(spawnEnemy, 8000);
 
         function randomTurn(index) {
-            if (Math.random() < 0.75) {  
+            if (Math.random() < 0.75) {
                 const directions = ["UP", "DOWN", "LEFT", "RIGHT"];
-                let randomDirection = directions[Math.floor(Math.random() * 4)];
-                enemyDirections[index] = randomDirection;
+                enemyDirections[index] = directions[Math.floor(Math.random() * 4)];
             }
         }
 
@@ -122,8 +132,7 @@
 
         function shootPellet(event) {
             if (event.key === "z" && !gameOver) {
-                let pellet = { x: snake[0].x, y: snake[0].y, dir: direction };
-                pellets.push(pellet);
+                pellets.push({ x: snake[0].x, y: snake[0].y, dir: direction });
             }
         }
 
@@ -143,19 +152,23 @@
             else if (head.y < 0) head.y = canvas.height - box;
             else if (head.y >= canvas.height) head.y = 0;
 
+            if (head.x === food.x && head.y === food.y) {
+                score++;
+                food = spawnFood();
+            } else {
+                snake.pop();
+            }
+
             snake.unshift(head);
-            snake.pop();
 
             ctx.fillStyle = "black";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
+
             ctx.fillStyle = "red";
             ctx.fillRect(food.x, food.y, box, box);
-            
+
             ctx.fillStyle = "lime";
-            snake.forEach(segment => {
-                ctx.fillRect(segment.x, segment.y, box, box);
-            });
+            snake.forEach(segment => ctx.fillRect(segment.x, segment.y, box, box));
 
             ctx.fillStyle = "yellow";
             pellets.forEach((pellet, pIndex) => {
@@ -167,12 +180,11 @@
 
                 enemies.forEach((enemy, eIndex) => {
                     if (enemy.some(seg => seg.x === pellet.x && seg.y === pellet.y)) {
-                        enemyHealth[eIndex] -= 1;
+                        enemyHealth[eIndex]--;
                         pellets.splice(pIndex, 1);
 
                         if (enemyHealth[eIndex] <= 0) {
                             enemies.splice(eIndex, 1);
-                            enemyDirections.splice(eIndex, 1);
                             enemyHealth.splice(eIndex, 1);
                             score += 5;
                         }
@@ -185,9 +197,7 @@
                 let colorValue = Math.floor(255 * healthRatio);
                 ctx.fillStyle = `rgb(${colorValue}, ${colorValue}, 255)`;
 
-                enemy.forEach(segment => {
-                    ctx.fillRect(segment.x, segment.y, box, box);
-                });
+                enemy.forEach(segment => ctx.fillRect(segment.x, segment.y, box, box));
             });
 
             moveEnemies();
