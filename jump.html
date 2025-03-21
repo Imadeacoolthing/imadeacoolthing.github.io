@@ -24,8 +24,8 @@
   <script>
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
-    canvas.width = 1600; // Increased game size (width)
-    canvas.height = 900; // Increased game size (height)
+    canvas.width = window.innerWidth; // Fill screen width
+    canvas.height = window.innerHeight; // Fill screen height
 
     // Player object
     const player = {
@@ -42,7 +42,8 @@
       color: 'red',
       health: 3, // Player health
       knockback: 0, // Knockback effect for the player
-      facingRight: true // Track the direction the player is facing
+      facingRight: true, // Track the direction the player is facing
+      canJump: true // Flag to prevent jumping with up arrow
     };
 
     // Pellets (bullets)
@@ -57,9 +58,9 @@
       { x: 800, y: 300, width: 200, height: 20, moving: true, dx: 2, direction: 1 } // Moving platform
     ];
 
-    // Enemies (with physics)
+    // Enemies (with physics and health)
     const enemies = [];
-    const enemySpawnInterval = 3000; // Spawn enemies every 3 seconds
+    const enemySpawnInterval = 2000; // Spawn enemies every 2 seconds
 
     // Handle keyboard input
     let keys = {};
@@ -83,10 +84,9 @@
         player.dx = 0;
       }
 
-      if ((keys['ArrowUp'] || keys['w'] || keys[' ']) && player.grounded) {
+      if (keys['ArrowDown'] && player.grounded) { // Player can shoot down
         player.dy = player.jumpPower;
         player.grounded = false;
-        player.color = 'blue'; // Change color to blue when jumping
       }
     }
 
@@ -162,30 +162,36 @@
               pellet.x + pellet.width > enemy.x &&
               pellet.y < enemy.y + enemy.height &&
               pellet.y + pellet.height > enemy.y) {
-            enemy.alive = false; // Kill the enemy
+            enemy.health -= 1; // Decrease enemy health
             pellets.splice(i, 1); // Remove the pellet
+
+            if (enemy.health <= 0) {
+              enemy.alive = false; // Kill the enemy
+            }
             break;
           }
         }
       }
     }
 
-    // Move enemies (with physics)
+    // Move enemies (with physics and health)
     function moveEnemies() {
       enemies.forEach(enemy => {
         if (enemy.alive) {
           enemy.x += enemy.dx;
 
-          // Apply gravity for enemies
-          if (enemy.y + enemy.height < canvas.height) {
-            enemy.dy += enemy.gravity;
-          } else {
-            enemy.y = canvas.height - enemy.height;
-            enemy.dy = 0;
-            enemy.grounded = true;
+          // Apply gravity for ground-based enemies
+          if (!enemy.isFlying) {
+            if (enemy.y + enemy.height < canvas.height) {
+              enemy.dy += enemy.gravity;
+            } else {
+              enemy.y = canvas.height - enemy.height;
+              enemy.dy = 0;
+              enemy.grounded = true;
+            }
           }
 
-          // Simulate jumping for enemies
+          // Simulate jumping for ground-based enemies
           if (enemy.grounded && Math.random() < 0.01) { // Random chance for jump
             enemy.dy = enemy.jumpPower;
             enemy.grounded = false;
@@ -194,6 +200,14 @@
           // Prevent enemies from going off the screen horizontally
           if (enemy.x + enemy.width > canvas.width || enemy.x < 0) {
             enemy.dx *= -1; // Reverse direction
+          }
+
+          // Flying enemies can move vertically
+          if (enemy.isFlying) {
+            enemy.y += enemy.dy;
+            if (enemy.y < 0 || enemy.y + enemy.height > canvas.height) {
+              enemy.dy *= -1; // Reverse direction when reaching screen edges
+            }
           }
         }
       });
@@ -213,23 +227,26 @@
 
     // Spawn enemies at random intervals
     function spawnEnemy() {
+      const isFlying = Math.random() < 0.5; // 50% chance for a flying enemy
       const newEnemy = {
         x: Math.random() * canvas.width, // Random horizontal spawn
         y: canvas.height - 100, // Always spawn on the ground
         width: 50,
         height: 50,
         dx: Math.random() < 0.5 ? 1 : -1, // Random horizontal direction
-        dy: 0,
+        dy: isFlying ? 2 : 0, // Flying enemies move vertically
         gravity: 0.8,
         jumpPower: -15,
         grounded: false,
-        alive: true
+        alive: true,
+        health: 3,
+        isFlying: isFlying
       };
       enemies.push(newEnemy);
     }
 
-    // Spawn enemies every 3-4 seconds
-    setInterval(spawnEnemy, 3000 + Math.random() * 1000);
+    // Spawn enemies every 2 seconds
+    setInterval(spawnEnemy, enemySpawnInterval);
 
     // Check for player-enemy collision (knockback effect)
     function checkPlayerEnemyCollision() {
@@ -243,14 +260,6 @@
           setTimeout(() => {
             player.knockback = 0; // Stop knockback after a short delay
           }, 100); // Knockback duration
-
-          // Respawn the enemy after a short delay
-          enemy.alive = false;
-          setTimeout(() => {
-            enemy.alive = true; // Respawn the enemy
-            enemy.x = Math.random() * canvas.width; // Reset enemy position randomly
-            enemy.y = canvas.height - 100; // Ensure the enemy spawns on the ground
-          }, 1000);
         }
       });
     }
@@ -284,8 +293,8 @@
 
     // Draw enemies
     function drawEnemies() {
-      ctx.fillStyle = 'red';
       enemies.forEach(enemy => {
+        ctx.fillStyle = enemy.isFlying ? 'white' : 'red'; // Flying enemies are white
         if (enemy.alive) {
           ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
         }
