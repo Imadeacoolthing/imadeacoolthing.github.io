@@ -242,7 +242,7 @@
         width: 50,
         height: 50,
         dx: Math.random() < 0.5 ? 1 : -1, // Random horizontal direction
-        dy: isFlying ? Math.random() * 2 - 1 : 0, // Flying enemies move vertically
+        dy: isFlying ? Math.random() * 2 + 1 : 0, // Flying enemies move vertically and faster
         gravity: 0.8,
         jumpPower: -15,
         grounded: false,
