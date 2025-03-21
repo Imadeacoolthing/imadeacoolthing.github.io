@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Platformer Game with Shooting</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    canvas {
+      display: block;
+      background-color: #87CEEB;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="gameCanvas"></canvas>
+
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    // Player object
+    const player = {
+      x: 100,
+      y: canvas.height - 150,
+      width: 50,
+      height: 70,
+      speed: 5,
+      dx: 0,
+      dy: 0,
+      gravity: 0.8,
+      jumpPower: -15,
+      grounded: false,
+      color: 'red',
+      currentFrame: 0,
+      frameTimer: 0
+    };
+
+    // Pellets (bullets)
+    const pellets = [];
+
+    // Platforms (static)
+    const platforms = [
+      { x: 0, y: canvas.height - 50, width: canvas.width, height: 50 },
+      { x: 300, y: 400, width: 200, height: 20 },
+      { x: 600, y: 300, width: 200, height: 20 }
+    ];
+
+    // Enemies
+    const enemies = [
+      { x: 500, y: 250, width: 50, height: 50, dx: 1, alive: true }
+    ];
+
+    // Handle keyboard input
+    let keys = {};
+    window.addEventListener('keydown', (e) => {
+      keys[e.key] = true;
+    });
+
+    window.addEventListener('keyup', (e) => {
+      keys[e.key] = false;
+    });
+
+    // Movement
+    function movePlayer() {
+      if (keys['ArrowRight'] || keys['d']) {
+        player.dx = player.speed;
+      } else if (keys['ArrowLeft'] || keys['a']) {
+        player.dx = -player.speed;
+      } else {
+        player.dx = 0;
+      }
+
+      if ((keys['ArrowUp'] || keys['w'] || keys[' ']) && player.grounded) {
+        player.dy = player.jumpPower;
+        player.grounded = false;
+        player.color = 'blue'; // Change color to blue when jumping
+      }
+    }
+
+    function updatePlayer() {
+      player.x += player.dx;
+      player.y += player.dy;
+
+      // Gravity effect
+      if (player.y + player.height < canvas.height) {
+        player.dy += player.gravity;
+      } else {
+        player.y = canvas.height - player.height;
+        player.dy = 0;
+        player.grounded = true;
+        player.color = 'red'; // Change back to red when grounded
+      }
+    }
+
+    // Collision with platforms
+    function checkCollisions() {
+      player.grounded = false;
+      platforms.forEach(platform => {
+        if (player.x < platform.x + platform.width &&
+            player.x + player.width > platform.x &&
+            player.y + player.height > platform.y &&
+            player.y + player.height <= platform.y + player.dy) {
+          player.y = platform.y - player.height;
+          player.dy = 0;
+          player.grounded = true;
+        }
+      });
+    }
+
+    // Shooting mechanic
+    function shootPellet() {
+      if (keys[' ']) {  // Press space to shoot
+        const pellet = {
+          x: player.x + player.width / 2,
+          y: player.y + player.height / 2,
+          width: 10,
+          height: 5,
+          speed: 7,
+          dx: 1 // Shoot to the right (can be adjusted for left or right)
+        };
+        pellets.push(pellet);
+      }
+    }
+
+    // Update pellets (move them and check for collisions with enemies)
+    function updatePellets() {
+      for (let i = pellets.length - 1; i >= 0; i--) {
+        const pellet = pellets[i];
+        pellet.x += pellet.speed * pellet.dx;
+
+        // Remove pellet if it goes off-screen
+        if (pellet.x > canvas.width) {
+          pellets.splice(i, 1);
+        }
+
+        // Check collision with enemies
+        for (let j = 0; j < enemies.length; j++) {
+          const enemy = enemies[j];
+          if (enemy.alive && pellet.x < enemy.x + enemy.width &&
+              pellet.x + pellet.width > enemy.x &&
+              pellet.y < enemy.y + enemy.height &&
+              pellet.y + pellet.height > enemy.y) {
+            enemy.alive = false; // Kill the enemy
+            pellets.splice(i, 1); // Remove the pellet
+            break;
+          }
+        }
+      }
+    }
+
+    // Move enemies
+    function moveEnemies() {
+      enemies.forEach(enemy => {
+        if (enemy.alive) {
+          enemy.x += enemy.dx;
+          if (enemy.x + enemy.width > canvas.width || enemy.x < 0) {
+            enemy.dx *= -1; // Reverse direction
+          }
+        }
+      });
+    }
+
+    // Draw the player
+    function drawPlayer() {
+      ctx.fillStyle = player.color;
+      ctx.fillRect(player.x, player.y, player.width, player.height);
+    }
+
+    // Draw platforms
+    function drawPlatforms() {
+      ctx.fillStyle = 'green';
+      platforms.forEach(platform => {
+        ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
+      });
+    }
+
+    // Draw pellets
+    function drawPellets() {
+      ctx.fillStyle = 'black';
+      pellets.forEach(pellet => {
+        ctx.fillRect(pellet.x, pellet.y, pellet.width, pellet.height);
+      });
+    }
+
+    // Draw enemies
+    function drawEnemies() {
+      ctx.fillStyle = 'red';
+      enemies.forEach(enemy => {
+        if (enemy.alive) {
+          ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
+        }
+      });
+    }
+
+    // Game loop
+    function gameLoop() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);  // Clear the canvas
+      movePlayer();
+      updatePlayer();
+      checkCollisions();
+      shootPellet();
+      updatePellets();
+      moveEnemies();
+      drawPlatforms();
+      drawPellets();
+      drawEnemies();
+      drawPlayer();
+      requestAnimationFrame(gameLoop);
+    }
+
+    // Start the game
+    gameLoop();
+  </script>
+</body>
+</html>
