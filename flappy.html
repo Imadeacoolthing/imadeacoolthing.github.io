@@ -14,14 +14,24 @@
             display: block;
             background-color: #70c5ce;
         }
+        .score {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 30px;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
     </style>
 </head>
 <body>
+    <div class="score">Score: 0</div>
     <canvas id="gameCanvas"></canvas>
     <script>
         // Game setup
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
+        const scoreElement = document.querySelector('.score');
 
         // Set canvas size
         canvas.width = 800;
@@ -29,7 +39,7 @@
 
         // Game constants
         const GRAVITY = 0.6;
-        const FLAP = -12;
+        const FLAP = -8; // Reduced flap to make the bird jump less high
         const SPAWN_RATE = 90; // Frequency of pipes in frames
         const PIPE_WIDTH = 50;
         const PIPE_GAP = 200;
@@ -50,6 +60,9 @@
         let bullets = [];
         let lasers = [];
 
+        // Score
+        let score = 0;
+
         // Event listener for bird flap
         document.addEventListener('keydown', () => {
             birdVelocity = FLAP;
@@ -58,7 +71,7 @@
         // Game loop
         function gameLoop() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
+
             birdVelocity += GRAVITY;
             birdY += birdVelocity;
 
@@ -173,14 +186,22 @@
                 restartGame();
             }
 
-            // Check for pipe collisions
+            // Check for pipe collisions and increment score when passing pipes
             pipes.forEach(pipe => {
                 if (pipe.x < 50 + birdWidth && pipe.x + PIPE_WIDTH > 50) {
                     if (birdY < pipe.y || birdY + birdHeight > pipe.y + PIPE_GAP) {
                         restartGame(); // Bird hits pipe
                     }
+                    // Increase score when bird successfully passes between pipes
+                    if (pipe.x + PIPE_WIDTH < 50 && !pipe.passed) {
+                        score++;
+                        pipe.passed = true; // Flag to avoid multiple score increments for same pipes
+                    }
                 }
             });
+
+            // Update score display
+            scoreElement.textContent = `Score: ${score}`;
 
             // Request next frame
             frames++;
@@ -194,6 +215,8 @@
             pipes = [];
             bullets = [];
             lasers = [];
+            score = 0; // Reset score
+            scoreElement.textContent = `Score: ${score}`;
             frames = 0;
         }
 
