@@ -72,22 +72,23 @@
                 pipes.push({ x: canvas.width, y: pipeHeight });
             }
 
-            // Move pipes and shoot bullets
+            // Move pipes
             pipes.forEach(pipe => {
                 pipe.x -= 3;
                 ctx.fillStyle = '#008000';
                 ctx.fillRect(pipe.x, 0, PIPE_WIDTH, pipe.y); // Top pipe
                 ctx.fillRect(pipe.x, pipe.y + PIPE_GAP, PIPE_WIDTH, canvas.height - pipe.y - PIPE_GAP); // Bottom pipe
-                
-                // Shoot bullets from pipes
-                if (Math.random() < 0.02) { // 2% chance to shoot a bullet each frame
-                    bullets.push({
-                        x: pipe.x + PIPE_WIDTH,
-                        y: pipe.y + PIPE_GAP / 2,
-                        direction: -1 // Bullet moving to the left
-                    });
-                }
             });
+
+            // Bullet mechanics: Bullets spawn from the right side of the screen at random Y positions
+            if (frames % 50 === 0) { // Spawn bullet every 50 frames
+                const bulletY = Math.random() * (canvas.height - 5); // Random Y position
+                bullets.push({
+                    x: canvas.width, // Start from the right side
+                    y: bulletY,
+                    direction: -1 // Bullet moves to the left
+                });
+            }
 
             // Move bullets
             bullets.forEach((bullet, index) => {
