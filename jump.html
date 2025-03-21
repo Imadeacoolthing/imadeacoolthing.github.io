@@ -236,7 +236,7 @@
       const isFlying = Math.random() < 0.5; // 50% chance for a flying enemy
       const newEnemy = {
         x: Math.random() * canvas.width, // Random horizontal spawn
-        y: 0, // Spawn at the top of the screen for flying enemies
+        y: isFlying ? 0 : canvas.height - 100, // Flying enemies spawn at the top
         width: 50,
         height: 50,
         dx: Math.random() < 0.5 ? 1 : -1, // Random horizontal direction
