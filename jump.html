@@ -138,9 +138,11 @@
           dx: player.facingRight ? 1 : -1, // Shoot right if facing right, left if facing left
           dy: 0
         };
+
         // Allow shooting up and down
         if (keys['ArrowUp']) pellet.dy = -1; // Shoot upwards
         if (keys['ArrowDown']) pellet.dy = 1; // Shoot downwards
+
         pellets.push(pellet);
         canShoot = false;  // Disable shooting
         setTimeout(() => {
