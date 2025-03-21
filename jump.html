@@ -54,8 +54,8 @@
     // Platforms (static and moving)
     const platforms = [
       { x: 0, y: canvas.height - 50, width: canvas.width, height: 50, moving: false },
-      { x: 500, y: 400, width: 200, height: 20, moving: false },
-      { x: 800, y: 300, width: 200, height: 20, moving: true, dx: 2, direction: 1 } // Moving platform
+      { x: 500, y: 350, width: 200, height: 20, moving: false }, // Lowered platform
+      { x: 800, y: 250, width: 200, height: 20, moving: true, dx: 2, direction: 1 } // Moving platform
     ];
 
     // Enemies (with physics and health)
@@ -84,9 +84,10 @@
         player.dx = 0;
       }
 
-      if (keys['ArrowDown'] && player.grounded) { // Player can shoot down
+      if (keys[' '] && player.grounded) { // Spacebar to jump
         player.dy = player.jumpPower;
         player.grounded = false;
+        player.color = 'blue'; // Change color to blue when jumping
       }
     }
 
@@ -134,8 +135,12 @@
           width: 10,
           height: 5,
           speed: 7,
-          dx: player.facingRight ? 1 : -1 // Shoot right if facing right, left if facing left
+          dx: player.facingRight ? 1 : -1, // Shoot right if facing right, left if facing left
+          dy: 0
         };
+        // Allow shooting up and down
+        if (keys['ArrowUp']) pellet.dy = -1; // Shoot upwards
+        if (keys['ArrowDown']) pellet.dy = 1; // Shoot downwards
         pellets.push(pellet);
         canShoot = false;  // Disable shooting
         setTimeout(() => {
@@ -149,9 +154,10 @@
       for (let i = pellets.length - 1; i >= 0; i--) {
         const pellet = pellets[i];
         pellet.x += pellet.speed * pellet.dx;
+        pellet.y += pellet.dy;
 
         // Remove pellet if it goes off-screen
-        if (pellet.x > canvas.width || pellet.x < 0) {
+        if (pellet.x > canvas.width || pellet.x < 0 || pellet.y > canvas.height || pellet.y < 0) {
           pellets.splice(i, 1);
         }
 
@@ -197,17 +203,17 @@
             enemy.grounded = false;
           }
 
-          // Prevent enemies from going off the screen horizontally
-          if (enemy.x + enemy.width > canvas.width || enemy.x < 0) {
-            enemy.dx *= -1; // Reverse direction
-          }
-
           // Flying enemies can move vertically
           if (enemy.isFlying) {
             enemy.y += enemy.dy;
             if (enemy.y < 0 || enemy.y + enemy.height > canvas.height) {
-              enemy.dy *= -1; // Reverse direction when reaching screen edges
+              enemy.dy *= -0.5; // Gradual decrease in vertical speed
             }
+          }
+
+          // Prevent enemies from going off the screen horizontally
+          if (enemy.x + enemy.width > canvas.width || enemy.x < 0) {
+            enemy.dx *= -1; // Reverse direction
           }
         }
       });
@@ -230,16 +236,16 @@
       const isFlying = Math.random() < 0.5; // 50% chance for a flying enemy
       const newEnemy = {
         x: Math.random() * canvas.width, // Random horizontal spawn
-        y: canvas.height - 100, // Always spawn on the ground
+        y: 0, // Spawn at the top of the screen for flying enemies
         width: 50,
         height: 50,
         dx: Math.random() < 0.5 ? 1 : -1, // Random horizontal direction
-        dy: isFlying ? 2 : 0, // Flying enemies move vertically
+        dy: isFlying ? Math.random() * 2 - 1 : 0, // Flying enemies move vertically
         gravity: 0.8,
         jumpPower: -15,
         grounded: false,
         alive: true,
-        health: 3,
+        health: isFlying ? 1 : 3, // Flying enemies have 1 health
         isFlying: isFlying
       };
       enemies.push(newEnemy);
