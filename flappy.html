@@ -81,7 +81,7 @@
             // Pipe mechanics
             if (frames % SPAWN_RATE === 0) {
                 const pipeHeight = Math.floor(Math.random() * (canvas.height - PIPE_GAP));
-                pipes.push({ x: canvas.width, y: pipeHeight });
+                pipes.push({ x: canvas.width, y: pipeHeight, passed: false });
             }
 
             // Move pipes
@@ -124,8 +124,8 @@
                 }
             });
 
-            // Laser mechanics
-            if (frames % 300 === 0) { // Spawn laser every 300 frames (about every 5 seconds)
+            // Laser mechanics (spawn every 5 to 6 seconds)
+            if (frames % (3000 + Math.floor(Math.random() * 600)) === 0) {
                 lasers.push({
                     x: canvas.width,
                     y: Math.random() * (canvas.height - LASER_HEIGHT), // Random Y position
