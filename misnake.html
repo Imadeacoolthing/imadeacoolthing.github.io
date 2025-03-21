@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Snake Game</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #222;
+            overflow: hidden;
+            margin: 0;
+        }
+        canvas {
+            border: 2px solid white;
+        }
+        #beans {
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="crt">
+    <canvas id="gameCanvas" id="canvas" width="800" height="800"></canvas>
+    <h1 id="beans">SCORE: <span id="scoredisp">0</span></h1>
+    </div>
+    <script src="crt.js"></script>
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        var score = 0;
+        const box = 20;
+        let snake = [];
+        for (let i = 0; i < 5; i++) {
+            snake.push({ x: 400 - i * box, y: 400 });
+        }
+        let direction = "RIGHT";
+        let nextDirection = "RIGHT";
+        let food = {
+            x: Math.floor(Math.random() * 40) * box,
+            y: Math.floor(Math.random() * 40) * box
+        };
+        let pellets = [];
+        let pelletSpeed = 20;
+        let enemies = [];
+        let enemyDirections = [];
+        let enemySpeeds = [];
+        let enemyBullets = [];  // Array to hold enemy bullets
+        let goldSnake = null; // Variable to hold the gold snake
+        let gameOver = false;
+        let snakeSpeed = 100; // Snake speed in milliseconds (lower is faster)
+        let enemySpawnRate = 8000; // Enemy spawn rate in milliseconds (lower is faster)
+        
+        // Snake initialization
+        function createGoldSnake() {
+            let snakeLength = Math.max(snake.length - 2, 1);
+            let x = Math.floor(Math.random() * 40) * box;
+            let y = Math.floor(Math.random() * 40) * box;
+
+            goldSnake = [{ x: x, y: y }];
+            for (let i = 1; i < snakeLength; i++) {
+                goldSnake.push({ x: x - i * box, y: y });
+            }
+        }
+
+        document.addEventListener("keydown", (event) => {
+            if (!gameOver) {
+                event.preventDefault();
+                changeDirection(event);
+            }
+        });
+        document.addEventListener("keydown", shootPellet);
+
+        function spawnEnemy() {
+            if (Math.random() < 0.75) {
+                let enemyLength = Math.max(snake.length - 2, 1);
+                let enemyX, enemyY;
+                do {
+                    enemyX = Math.floor(Math.random() * 40) * box;
+                    enemyY = Math.floor(Math.random() * 40) * box;
+                } while (Math.abs(enemyX - snake[0].x) < 100 || Math.abs(enemyY - snake[0].y) < 100);
+
+                let enemy = [{ x: enemyX, y: enemyY }];
+                for (let i = 1; i < enemyLength; i++) {
+                    enemy.push({ x: enemyX - i * box, y: enemyY });
+                }
+                enemies.push(enemy);
+                enemyDirections.push(["UP", "DOWN", "LEFT", "RIGHT"][Math.floor(Math.random() * 4)]);
+                enemySpeeds.push(1); // Initial speed
+            }
+        }
+
+        setInterval(spawnEnemy, enemySpawnRate);
+
+        function randomTurn(index) {
+            if (Math.random() < 0.75) {  // 75% chance to change direction
+                const directions = ["UP", "DOWN", "LEFT", "RIGHT"];
+                let randomDirection = directions[Math.floor(Math.random() * 4)];
+                enemyDirections[index] = randomDirection;
+            }
+        }
+
+        function moveEnemies() {
+            enemies.forEach((enemy, index) => {
+                let speed = enemySpeeds[index];
+                let head = { ...enemy[0] };
+
+                // Move enemy in the current direction
+                if (enemyDirections[index] === "UP") head.y -= box * speed;
+                else if (enemyDirections[index] === "DOWN") head.y += box * speed;
+                else if (enemyDirections[index] === "LEFT") head.x -= box * speed;
+                else if (enemyDirections[index] === "RIGHT") head.x += box * speed;
+
+                // Wrap enemy around screen if it goes out of bounds
+                if (head.x < 0) head.x = canvas.width - box;
+                else if (head.x >= canvas.width) head.x = 0;
+                else if (head.y < 0) head.y = canvas.height - box;
+                else if (head.y >= canvas.height) head.y = 0;
+
+                enemy.unshift(head);
+                enemy.pop();
+            });
+        }
+
+        function increaseEnemySpeed() {
+            enemySpeeds = enemySpeeds.map(speed => speed * 1.05); // Increase enemy speed by 5% each time
+        }
+
+        function increaseSnakeSpeed() {
+            if (snakeSpeed > 50) {
+                snakeSpeed -= 5; // Increase snake speed by decreasing the interval
+            }
+        }
+
+        function changeDirection(event) {
+            const key = event.key;
+            if (key === "ArrowUp" && direction !== "DOWN") nextDirection = "UP";
+            else if (key === "ArrowDown" && direction !== "UP") nextDirection = "DOWN";
+            else if (key === "ArrowLeft" && direction !== "RIGHT") nextDirection = "LEFT";
+            else if (key === "ArrowRight" && direction !== "LEFT") nextDirection = "RIGHT";
+        }
+
+        function shootPellet(event) {
+            if (event.key === "z" && !gameOver) {
+                let pellet = { x: snake[0].x, y: snake[0].y, dir: direction };
+                pellets.push(pellet);
+            }
+        }
+
+        function shootEnemyBullet() {
+            enemies.forEach(enemy => {
+                let bulletDirection = "RIGHT"; // Default bullet direction (toward the snake)
+                if (enemy[0].x < snake[0].x) bulletDirection = "RIGHT";
+                else if (enemy[0].x > snake[0].x) bulletDirection = "LEFT";
+                else if (enemy[0].y < snake[0].y) bulletDirection = "DOWN";
+                else if (enemy[0].y > snake[0].y) bulletDirection = "UP";
+                
+                let bullet = { x: enemy[0].x, y: enemy[0].y, dir: bulletDirection };
+                enemyBullets.push(bullet);
+            });
+        }
+
+        setInterval(shootEnemyBullet, 2000); // Enemies shoot every 2 seconds
+
+        function checkSelfCollision() {
+            // Check if snake's head collides with any of its body segments
+            for (let i = 1; i < snake.length; i++) {
+                if (snake[i].x === snake[0].x && snake[i].y === snake[0].y) {
+                    return true; // Snake hits itself
+                }
+            }
+            return false;
+        }
+
+        function checkEnemyCollision() {
+            // Check if snake's head collides with any enemy
+            for (let enemy of enemies) {
+                for (let segment of enemy) {
+                    if (snake[0].x === segment.x && snake[0].y === segment.y) {
+                        return true; // Snake hits enemy
+                    }
+                }
+            }
+            return false;
+        }
+
+        function checkBulletCollision() {
+            // Check if snake's head collides with any enemy bullet
+            for (let bullet of enemyBullets) {
+                if (snake[0].x === bullet.x && snake[0].y === bullet.y) {
+                    gameOver = true;
+                    alert("Game Over! You were hit by an enemy bullet.");
+                    location.reload();
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function moveBullets() {
+            enemyBullets.forEach((bullet, index) => {
+                if (bullet.dir === "UP") bullet.y -= box;
+                else if (bullet.dir === "DOWN") bullet.y += box;
+                else if (bullet.dir === "LEFT") bullet.x -= box;
+                else if (bullet.dir === "RIGHT") bullet.x += box;
+
+                // Remove bullets that are out of bounds
+                if (bullet.x < 0 || bullet.x >= canvas.width || bullet.y < 0 || bullet.y >= canvas.height) {
+                    enemyBullets.splice(index, 1);
+                }
+            });
+        }
+
+        function draw() {
+            if (gameOver) return;
+            document.getElementById("scoredisp").innerHTML = score;
+            direction = nextDirection;
+
+            // Move the snake
+            let head = { ...snake[0] };
+            if (direction === "UP") head.y -= box;
+            else if (direction === "DOWN") head.y += box;
+            else if (direction === "LEFT") head.x -= box;
+            else if (direction === "RIGHT") head.x += box;
+
+            // Wrap snake around screen if it goes out of bounds
+            if (head.x < 0) head.x = canvas.width - box;
+            else if (head.x >= canvas.width) head.x = 0;
+            else if (head.y < 0) head.y = canvas.height - box;
+            else if (head.y >= canvas.height) head.y = 0;
+
+            // Check for self-collision
+            if (checkSelfCollision()) {
+                gameOver = true;
+                alert("Game Over! You hit yourself.");
+                location.reload();
+                return;
+            }
+
+            // Check for enemy collision
+            if (checkEnemyCollision()) {
+                gameOver = true;
+                alert("Game Over! You hit an enemy.");
+                location.reload();
+                return;
+            }
+
+            // Check for bullet collision
+            if (checkBulletCollision()) return;
+
+            // Add new head to snake array
+            snake.unshift(head);
+
+            // Check if the snake's head is on the food
+            if (head.x === food.x && head.y === food.y) {
+                // Grow the snake by adding a new segment
+                // We don't remove the tail to simulate growth
+                score += 1;
+                // Generate new food
+                food = {
+                    x: Math.floor(Math.random() * 40) * box,
+                    y: Math.floor(Math.random() * 40) * box
+                };
+                increaseSnakeSpeed(); // Increase snake speed as the game progresses
+            } else {
+                // Remove the last segment of the snake to maintain its length
+                snake.pop();
+            }
+
+            // Handle Gold Snake
+            if (Math.random() < 0.1 && !goldSnake) {
+                createGoldSnake(); // 10% chance to spawn gold snake
+            }
+
+            ctx.fillStyle = "black";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw food
+            ctx.fillStyle = "red";
+            ctx.fillRect(food.x, food.y, box, box);
+            
+            // Draw regular snake
+            ctx.fillStyle = "lime";
+            snake.forEach(segment => {
+                ctx.fillRect(segment.x, segment.y, box, box);
+            });
+
+            // Draw Gold Snake (if exists)
+            if (goldSnake) {
+                ctx.fillStyle = "gold";
+                goldSnake.forEach(segment => {
+                    ctx.fillRect(segment.x, segment.y, box, box);
+                });
+            }
+
+            // Draw pellets
+            ctx.fillStyle = "yellow";
+            pellets.forEach((pellet, index) => {
+                ctx.fillRect(pellet.x + box / 4, pellet.y + box / 4, box / 2, box / 2);
+                if (pellet.dir === "UP") pellet.y -= pelletSpeed;
+                else if (pellet.dir === "DOWN") pellet.y += pelletSpeed;
+                else if (pellet.dir === "LEFT") pellet.x -= pelletSpeed;
+                else if (pellet.dir === "RIGHT") pellet.x += pelletSpeed;
+                
+                enemies.forEach((enemy, eIndex) => {
+                    if (enemy.some(seg => seg.x === pellet.x && seg.y === pellet.y)) {
+                        enemies.splice(eIndex, 1);
+                        enemyDirections.splice(eIndex, 1);
+                        pellets.splice(index, 1);
+                        score += 5;
+                    }
+                });
+            });
+
+            // Draw enemies
+            ctx.fillStyle = "blue";
+            enemies.forEach(enemy => {
+                enemy.forEach(segment => {
+                    ctx.fillRect(segment.x, segment.y, box, box);
+                });
+            });
+
+            // Draw enemy bullets
+            ctx.fillStyle = "red";
+            enemyBullets.forEach(bullet => {
+                ctx.fillRect(bullet.x, bullet.y, box / 2, box / 2);
+            });
+
+            moveEnemies();
+            moveBullets();
+        }
+
+        setInterval(() => {
+            // Every 1 second, make a random 50% chance for enemies to turn
+            enemies.forEach((_, index) => randomTurn(index));
+        }, 1000);  // Every 2 second
+
+        setInterval(draw, snakeSpeed);  // Change snake speed here
+        setInterval(() => {
+            if (score > 0 && score % 5 === 0) {
+                increaseEnemySpeed();
+                enemySpawnRate = Math.max(4000, enemySpawnRate - 500);  // Increase enemy spawn rate (faster spawn)
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
