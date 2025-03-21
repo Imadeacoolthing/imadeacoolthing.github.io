@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tetris with Bullets</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #1e1e1e;
+      margin: 0;
+    }
+
+    #tetris-board {
+      display: grid;
+      grid-template-columns: repeat(10, 30px);
+      grid-template-rows: repeat(20, 30px);
+      gap: 1px;
+      background-color: #222;
+    }
+
+    .block {
+      width: 30px;
+      height: 30px;
+      background-color: #ddd;
+    }
+
+    .active {
+      background-color: #f39c12;
+    }
+
+    .bullet {
+      width: 10px;
+      height: 10px;
+      background-color: red;
+      position: absolute;
+      border-radius: 50%;
+    }
+
+    .game-over {
+      color: red;
+      font-size: 30px;
+      font-weight: bold;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<div id="tetris-board"></div>
+<div id="game-over" class="game-over" style="display: none;">Game Over!</div>
+
+<script>
+  const COLS = 10;
+  const ROWS = 20;
+  const BOARD_SIZE = COLS * ROWS;
+  const tetrisBoard = document.getElementById('tetris-board');
+  const gameOverMessage = document.getElementById('game-over');
+  const tetrominoes = [
+    [[1, 1, 1, 1]], // I
+    [[1, 1], [1, 1]], // O
+    [[0, 1, 0], [1, 1, 1]], // T
+    [[1, 0, 0], [1, 1, 1]], // L
+    [[0, 0, 1], [1, 1, 1]], // J
+    [[1, 1, 0], [0, 1, 1]], // S
+    [[0, 1, 1], [1, 1, 0]], // Z
+  ];
+
+  let board = Array(ROWS).fill().map(() => Array(COLS).fill(0));
+  let currentPiece = null;
+  let currentPos = { x: 4, y: 0 };
+  let gameInterval;
+  let bullets = [];
+  let bulletInterval;
+
+  // Create the board
+  function createBoard() {
+    for (let i = 0; i < BOARD_SIZE; i++) {
+      const div = document.createElement('div');
+      div.classList.add('block');
+      tetrisBoard.appendChild(div);
+    }
+  }
+
+  // Draw the board
+  function drawBoard() {
+    const blocks = tetrisBoard.getElementsByClassName('block');
+    board.forEach((row, y) => {
+      row.forEach((cell, x) => {
+        const index = y * COLS + x;
+        if (cell) {
+          blocks[index].classList.add('active');
+        } else {
+          blocks[index].classList.remove('active');
+        }
+      });
+    });
+  }
+
+  // Generate random piece
+  function generatePiece() {
+    const shape = tetrominoes[Math.floor(Math.random() * tetrominoes.length)];
+    return {
+      shape,
+      x: Math.floor(COLS / 2) - Math.floor(shape[0].length / 2),
+      y: 0,
+    };
+  }
+
+  // Check if the piece is valid in its position
+  function isValidMove(piece, xOffset, yOffset) {
+    return piece.shape.every((row, y) => {
+      return row.every((cell, x) => {
+        if (cell) {
+          const newX = piece.x + x + xOffset;
+          const newY = piece.y + y + yOffset;
+          if (newX < 0 || newX >= COLS || newY >= ROWS) return false;
+          if (newY >= 0 && board[newY][newX]) return false;
+        }
+        return true;
+      });
+    });
+  }
+
+  // Place the current piece on the board
+  function placePiece() {
+    currentPiece.shape.forEach((row, y) => {
+      row.forEach((cell, x) => {
+        if (cell) {
+          board[currentPos.y + y][currentPos.x + x] = 1;
+        }
+      });
+    });
+
+    // Check for completed lines
+    for (let y = ROWS - 1; y >= 0; y--) {
+      if (board[y].every(cell => cell)) {
+        board.splice(y, 1);
+        board.unshift(Array(COLS).fill(0));
+      }
+    }
+
+    // Check for game over
+    if (board[0].some(cell => cell)) {
+      clearInterval(gameInterval);
+      clearInterval(bulletInterval);
+      gameOverMessage.style.display = 'block';
+    } else {
+      currentPiece = generatePiece();
+      currentPos = { x: 4, y: 0 };
+    }
+  }
+
+  // Move the current piece
+  function movePiece() {
+    if (isValidMove(currentPiece, 0, 1)) {
+      currentPos.y += 1;
+    } else {
+      placePiece();
+    }
+    drawBoard();
+  }
+
+  // Rotate the current piece
+  function rotatePiece() {
+    const rotatedShape = currentPiece.shape[0].map((_, i) =>
+      currentPiece.shape.map(row => row[i])
+    );
+    const rotatedPiece = { ...currentPiece, shape: rotatedShape };
+    if (isValidMove(rotatedPiece, 0, 0)) {
+      currentPiece = rotatedPiece;
+    }
+  }
+
+  // Move piece left or right
+  function moveSideways(direction) {
+    if (isValidMove(currentPiece, direction, 0)) {
+      currentPos.x += direction;
+    }
+    drawBoard();
+  }
+
+  // Handle keypresses
+  function handleKeyPress(event) {
+    if (event.key === 'ArrowLeft') {
+      moveSideways(-1);
+    } else if (event.key === 'ArrowRight') {
+      moveSideways(1);
+    } else if (event.key === 'ArrowDown') {
+      movePiece();
+    } else if (event.key === 'ArrowUp') {
+      rotatePiece();
+    }
+  }
+
+  // Create and move bullets
+  function createBullet() {
+    const bullet = document.createElement('div');
+    bullet.classList.add('bullet');
+    bullet.style.left = `${Math.floor(Math.random() * COLS) * 30 + 10}px`;
+    bullet.style.bottom = '0px';
+    document.body.appendChild(bullet);
+    bullets.push(bullet);
+  }
+
+  // Move bullets upwards and check for collisions
+  function moveBullets() {
+    bullets.forEach((bullet, index) => {
+      let top = parseInt(bullet.style.bottom) + 10;
+      if (top >= 600) {
+        bullet.remove();
+        bullets.splice(index, 1);
+      } else {
+        bullet.style.bottom = `${top}px`;
+      }
+
+      // Check for collision with the current piece
+      const pieceBlocks = [];
+      currentPiece.shape.forEach((row, y) => {
+        row.forEach((cell, x) => {
+          if (cell) pieceBlocks.push({ x: currentPos.x + x, y: currentPos.y + y });
+        });
+      });
+
+      pieceBlocks.forEach(pieceBlock => {
+        if (
+          pieceBlock.y === ROWS - 1 - Math.floor(top / 30) &&
+          pieceBlock.x === Math.floor(parseInt(bullet.style.left) / 30)
+        ) {
+          clearInterval(gameInterval);
+          clearInterval(bulletInterval);
+          gameOverMessage.style.display = 'block';
+        }
+      });
+    });
+  }
+
+  // Start the game
+  function startGame() {
+    createBoard();
+    currentPiece = generatePiece();
+    gameInterval = setInterval(movePiece, 500); // Move piece every 500ms
+    bulletInterval = setInterval(() => {
+      createBullet();
+      moveBullets();
+    }, 1500); // New bullet every 1.5 seconds
+
+    document.addEventListener('keydown', handleKeyPress);
+  }
+
+  startGame();
+</script>
+
+</body>
+</html>
