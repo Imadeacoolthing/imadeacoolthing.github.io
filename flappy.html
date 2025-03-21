@@ -39,7 +39,7 @@
         // Game constants
         const GRAVITY = 0.6;
         const FLAP = -8; // Reduced flap to make the bird jump less high
-        const SPAWN_RATE = 90; // Frequency of pipes in frames
+        const SPAWN_RATE = 230; // Frequency of pipes in frames
         const PIPE_WIDTH = 50;
         const PIPE_GAP = 200;
         const BULLET_SPEED = 5;
@@ -66,7 +66,10 @@
         document.addEventListener('keydown', () => {
             birdVelocity = FLAP;
         });
-
+        function score() {
+            score += 1;
+        }
+        setInterval(score(), 1000)
         // Game loop
         function gameLoop() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
