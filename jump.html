@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Platformer Game with Damage, Health, and Knockback</title>
+  <title>Platformer Game with Damage, Health, Knockback, and Directional Shooting</title>
   <style>
     body, html {
       margin: 0;
@@ -41,7 +41,8 @@
       grounded: false,
       color: 'red',
       health: 3, // Player health
-      knockback: 0 // Knockback effect for the player
+      knockback: 0, // Knockback effect for the player
+      facingRight: true // Track the direction the player is facing
     };
 
     // Pellets (bullets)
@@ -57,9 +58,8 @@
     ];
 
     // Enemies (with physics)
-    const enemies = [
-      { x: Math.random() * canvas.width, y: canvas.height - 100, width: 50, height: 50, dx: 1, dy: 0, gravity: 0.8, jumpPower: -15, grounded: false, alive: true }
-    ];
+    const enemies = [];
+    const enemySpawnInterval = 3000; // Spawn enemies every 3 seconds
 
     // Handle keyboard input
     let keys = {};
@@ -75,8 +75,10 @@
     function movePlayer() {
       if (keys['ArrowRight']) {
         player.dx = player.speed;
+        player.facingRight = true; // Player is facing right
       } else if (keys['ArrowLeft']) {
         player.dx = -player.speed;
+        player.facingRight = false; // Player is facing left
       } else {
         player.dx = 0;
       }
@@ -127,12 +129,12 @@
     function shootPellet() {
       if (keys['z'] && canShoot) {  // Press Z to shoot
         const pellet = {
-          x: player.x + player.width / 2,
+          x: player.x + (player.facingRight ? player.width : 0), // Shoot in the direction the player is facing
           y: player.y + player.height / 2,
           width: 10,
           height: 5,
           speed: 7,
-          dx: 1 // Shoot to the right (can be adjusted for left or right)
+          dx: player.facingRight ? 1 : -1 // Shoot right if facing right, left if facing left
         };
         pellets.push(pellet);
         canShoot = false;  // Disable shooting
@@ -149,7 +151,7 @@
         pellet.x += pellet.speed * pellet.dx;
 
         // Remove pellet if it goes off-screen
-        if (pellet.x > canvas.width) {
+        if (pellet.x > canvas.width || pellet.x < 0) {
           pellets.splice(i, 1);
         }
 
@@ -209,6 +211,26 @@
       });
     }
 
+    // Spawn enemies at random intervals
+    function spawnEnemy() {
+      const newEnemy = {
+        x: Math.random() * canvas.width, // Random horizontal spawn
+        y: canvas.height - 100, // Always spawn on the ground
+        width: 50,
+        height: 50,
+        dx: Math.random() < 0.5 ? 1 : -1, // Random horizontal direction
+        dy: 0,
+        gravity: 0.8,
+        jumpPower: -15,
+        grounded: false,
+        alive: true
+      };
+      enemies.push(newEnemy);
+    }
+
+    // Spawn enemies every 3-4 seconds
+    setInterval(spawnEnemy, 3000 + Math.random() * 1000);
+
     // Check for player-enemy collision (knockback effect)
     function checkPlayerEnemyCollision() {
       enemies.forEach(enemy => {
@@ -217,7 +239,7 @@
             player.y < enemy.y + enemy.height &&
             player.y + player.height > enemy.y) {
           player.health -= 1; // Player takes damage
-          player.knockback = 15; // Apply knockback to the player
+          player.knockback = player.facingRight ? -15 : 15; // Knockback based on player facing direction
           setTimeout(() => {
             player.knockback = 0; // Stop knockback after a short delay
           }, 100); // Knockback duration
