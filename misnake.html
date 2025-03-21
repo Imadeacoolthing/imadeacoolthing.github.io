@@ -79,7 +79,7 @@
             }
         }
 
-        setInterval(spawnEnemy, 8000);
+        setInterval(spawnEnemy, 4000);
 
         function randomTurn(index) {
             if (Math.random() < 0.75) {  // 75% chance to change direction
@@ -271,9 +271,9 @@
 
         setInterval(() => {
             enemies.forEach((_, index) => randomTurn(index));
-        }, 1000);
+        }, 500);
 
-        setInterval(draw, 100);
+        setInterval(draw, 50);
     </script>
 </body>
 </html>
