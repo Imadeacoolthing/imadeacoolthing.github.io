@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Platformer Game with Shooting</title>
+  <title>Platformer Game with Damage, Health, and Knockback</title>
   <style>
     body, html {
       margin: 0;
@@ -24,8 +24,8 @@
   <script>
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    canvas.width = 1600; // Increased game size (width)
+    canvas.height = 900; // Increased game size (height)
 
     // Player object
     const player = {
@@ -40,23 +40,25 @@
       jumpPower: -15,
       grounded: false,
       color: 'red',
-      currentFrame: 0,
-      frameTimer: 0
+      health: 3, // Player health
+      knockback: 0 // Knockback effect for the player
     };
 
     // Pellets (bullets)
     const pellets = [];
+    let canShoot = true;  // To control shooting rate
+    const fireRate = 300; // Time in milliseconds between shots
 
-    // Platforms (static)
+    // Platforms (static and moving)
     const platforms = [
-      { x: 0, y: canvas.height - 50, width: canvas.width, height: 50 },
-      { x: 300, y: 400, width: 200, height: 20 },
-      { x: 600, y: 300, width: 200, height: 20 }
+      { x: 0, y: canvas.height - 50, width: canvas.width, height: 50, moving: false },
+      { x: 500, y: 400, width: 200, height: 20, moving: false },
+      { x: 800, y: 300, width: 200, height: 20, moving: true, dx: 2, direction: 1 } // Moving platform
     ];
 
-    // Enemies
+    // Enemies (with physics)
     const enemies = [
-      { x: 500, y: 250, width: 50, height: 50, dx: 1, alive: true }
+      { x: Math.random() * canvas.width, y: canvas.height - 100, width: 50, height: 50, dx: 1, dy: 0, gravity: 0.8, jumpPower: -15, grounded: false, alive: true }
     ];
 
     // Handle keyboard input
@@ -69,11 +71,11 @@
       keys[e.key] = false;
     });
 
-    // Movement
+    // Movement for the player
     function movePlayer() {
-      if (keys['ArrowRight'] || keys['d']) {
+      if (keys['ArrowRight']) {
         player.dx = player.speed;
-      } else if (keys['ArrowLeft'] || keys['a']) {
+      } else if (keys['ArrowLeft']) {
         player.dx = -player.speed;
       } else {
         player.dx = 0;
@@ -86,11 +88,12 @@
       }
     }
 
+    // Update player physics
     function updatePlayer() {
-      player.x += player.dx;
+      player.x += player.dx + player.knockback;  // Apply knockback to player movement
       player.y += player.dy;
 
-      // Gravity effect
+      // Gravity effect for player
       if (player.y + player.height < canvas.height) {
         player.dy += player.gravity;
       } else {
@@ -99,9 +102,13 @@
         player.grounded = true;
         player.color = 'red'; // Change back to red when grounded
       }
+
+      // Prevent the player from moving off the screen horizontally due to knockback
+      if (player.x < 0) player.x = 0;
+      if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
     }
 
-    // Collision with platforms
+    // Collision detection for platforms (player)
     function checkCollisions() {
       player.grounded = false;
       platforms.forEach(platform => {
@@ -116,9 +123,9 @@
       });
     }
 
-    // Shooting mechanic
+    // Shooting mechanic (Pellets)
     function shootPellet() {
-      if (keys[' ']) {  // Press space to shoot
+      if (keys['z'] && canShoot) {  // Press Z to shoot
         const pellet = {
           x: player.x + player.width / 2,
           y: player.y + player.height / 2,
@@ -128,6 +135,10 @@
           dx: 1 // Shoot to the right (can be adjusted for left or right)
         };
         pellets.push(pellet);
+        canShoot = false;  // Disable shooting
+        setTimeout(() => {
+          canShoot = true;  // Enable shooting after delay
+        }, fireRate); // Fire rate delay
       }
     }
 
@@ -157,14 +168,67 @@
       }
     }
 
-    // Move enemies
+    // Move enemies (with physics)
     function moveEnemies() {
       enemies.forEach(enemy => {
         if (enemy.alive) {
           enemy.x += enemy.dx;
+
+          // Apply gravity for enemies
+          if (enemy.y + enemy.height < canvas.height) {
+            enemy.dy += enemy.gravity;
+          } else {
+            enemy.y = canvas.height - enemy.height;
+            enemy.dy = 0;
+            enemy.grounded = true;
+          }
+
+          // Simulate jumping for enemies
+          if (enemy.grounded && Math.random() < 0.01) { // Random chance for jump
+            enemy.dy = enemy.jumpPower;
+            enemy.grounded = false;
+          }
+
+          // Prevent enemies from going off the screen horizontally
           if (enemy.x + enemy.width > canvas.width || enemy.x < 0) {
             enemy.dx *= -1; // Reverse direction
           }
+        }
+      });
+    }
+
+    // Update moving platforms
+    function movePlatforms() {
+      platforms.forEach(platform => {
+        if (platform.moving) {
+          platform.x += platform.dx * platform.direction;
+          if (platform.x + platform.width > canvas.width || platform.x < 0) {
+            platform.direction *= -1; // Reverse direction when hitting edges
+          }
+        }
+      });
+    }
+
+    // Check for player-enemy collision (knockback effect)
+    function checkPlayerEnemyCollision() {
+      enemies.forEach(enemy => {
+        if (enemy.alive && player.x < enemy.x + enemy.width &&
+            player.x + player.width > enemy.x &&
+            player.y < enemy.y + enemy.height &&
+            player.y + player.height > enemy.y) {
+          player.health -= 1; // Player takes damage
+          player.knockback = 15; // Apply knockback to the player
+          setTimeout(() => {
+            player.knockback = 0; // Stop knockback after a short delay
+          }, 100); // Knockback duration
+
+          // Respawn the enemy after a short delay
+          enemy.alive = false;
+          setTimeout(() => {
+            enemy.alive = true; // Respawn the enemy
+            enemy.x = Math.random() * canvas.width; // Reset enemy position randomly
+            enemy.y = canvas.height - 100; // Ensure the enemy spawns on the ground
+          }, 1000);
         }
       });
     }
@@ -173,9 +237,14 @@
     function drawPlayer() {
       ctx.fillStyle = player.color;
       ctx.fillRect(player.x, player.y, player.width, player.height);
+
+      // Display player health
+      ctx.fillStyle = 'black';
+      ctx.font = '20px Arial';
+      ctx.fillText('Health: ' + player.health, 20, 30);
     }
 
-    // Draw platforms
+    // Draw platforms (static and moving)
     function drawPlatforms() {
       ctx.fillStyle = 'green';
       platforms.forEach(platform => {
@@ -183,7 +252,7 @@
       });
     }
 
-    // Draw pellets
+    // Draw pellets (bullets)
     function drawPellets() {
       ctx.fillStyle = 'black';
       pellets.forEach(pellet => {
@@ -201,6 +270,16 @@
       });
     }
 
+    // Check if the player is dead
+    function checkPlayerDeath() {
+      if (player.health <= 0) {
+        alert("Game Over! You died.");
+        player.health = 3; // Reset health
+        player.x = 100; // Reset player position
+        player.y = canvas.height - 150; // Reset player position
+      }
+    }
+
     // Game loop
     function gameLoop() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);  // Clear the canvas
@@ -210,6 +289,9 @@
       shootPellet();
       updatePellets();
       moveEnemies();
+      movePlatforms();
+      checkPlayerEnemyCollision();
+      checkPlayerDeath();
       drawPlatforms();
       drawPellets();
       drawEnemies();
