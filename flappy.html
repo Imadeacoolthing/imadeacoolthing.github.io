@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flappy Bird with Shooting Pipes & Death Lasers</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        canvas {
+            display: block;
+            background-color: #70c5ce;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+    <script>
+        // Game setup
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Set canvas size
+        canvas.width = 800;
+        canvas.height = 600;
+
+        // Game constants
+        const GRAVITY = 0.6;
+        const FLAP = -12;
+        const SPAWN_RATE = 90; // Frequency of pipes in frames
+        const PIPE_WIDTH = 50;
+        const PIPE_GAP = 200;
+        const BULLET_SPEED = 5;
+        const LASER_WIDTH = canvas.width; // Full screen width
+        const LASER_HEIGHT = 10; // Laser thickness
+        const LASER_BLINK_TIME = 2000; // 2 seconds blink
+        const LASER_ACTIVE_TIME = 1000; // 1 second active
+
+        // Bird setup
+        const birdWidth = 40;
+        const birdHeight = 40;
+        let birdY = canvas.height / 2;
+        let birdVelocity = 0;
+
+        // Pipe setup
+        let pipes = [];
+        let bullets = [];
+        let lasers = [];
+
+        // Event listener for bird flap
+        document.addEventListener('keydown', () => {
+            birdVelocity = FLAP;
+        });
+
+        // Game loop
+        function gameLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            birdVelocity += GRAVITY;
+            birdY += birdVelocity;
+
+            // Draw the bird
+            ctx.fillStyle = '#FF0';
+            ctx.fillRect(50, birdY, birdWidth, birdHeight);
+
+            // Pipe mechanics
+            if (frames % SPAWN_RATE === 0) {
+                const pipeHeight = Math.floor(Math.random() * (canvas.height - PIPE_GAP));
+                pipes.push({ x: canvas.width, y: pipeHeight });
+            }
+
+            // Move pipes and shoot bullets
+            pipes.forEach(pipe => {
+                pipe.x -= 3;
+                ctx.fillStyle = '#008000';
+                ctx.fillRect(pipe.x, 0, PIPE_WIDTH, pipe.y); // Top pipe
+                ctx.fillRect(pipe.x, pipe.y + PIPE_GAP, PIPE_WIDTH, canvas.height - pipe.y - PIPE_GAP); // Bottom pipe
+                
+                // Shoot bullets from pipes
+                if (Math.random() < 0.02) { // 2% chance to shoot a bullet each frame
+                    bullets.push({
+                        x: pipe.x + PIPE_WIDTH,
+                        y: pipe.y + PIPE_GAP / 2,
+                        direction: -1 // Bullet moving to the left
+                    });
+                }
+            });
+
+            // Move bullets
+            bullets.forEach((bullet, index) => {
+                bullet.x += BULLET_SPEED * bullet.direction; // Move the bullet
+                ctx.fillStyle = '#FF0000';
+                ctx.fillRect(bullet.x, bullet.y, 10, 5); // Draw bullet
+
+                // Remove bullets off-screen
+                if (bullet.x < 0) {
+                    bullets.splice(index, 1);
+                }
+
+                // Check for collision with bird
+                if (
+                    bullet.x < 50 + birdWidth &&
+                    bullet.x + 10 > 50 &&
+                    bullet.y < birdY + birdHeight &&
+                    bullet.y + 5 > birdY
+                ) {
+                    restartGame(); // Bird hit by bullet, game over
+                }
+            });
+
+            // Laser mechanics
+            if (frames % 300 === 0) { // Spawn laser every 300 frames (about every 5 seconds)
+                lasers.push({
+                    x: canvas.width,
+                    y: Math.random() * (canvas.height - LASER_HEIGHT), // Random Y position
+                    active: false,
+                    blinkStart: frames,
+                    activeStart: null
+                });
+            }
+
+            lasers.forEach((laser, index) => {
+                // Manage laser blink and active states
+                const elapsedTime = frames - laser.blinkStart;
+
+                // Laser blinking for 2 seconds
+                if (elapsedTime < LASER_BLINK_TIME) {
+                    laser.active = false;
+                }
+                // Laser active for 1 second
+                else if (elapsedTime >= LASER_BLINK_TIME && elapsedTime < LASER_BLINK_TIME + LASER_ACTIVE_TIME) {
+                    laser.active = true;
+                    laser.activeStart = frames;
+                }
+                // Reset the timer after laser is done
+                else if (elapsedTime >= LASER_BLINK_TIME + LASER_ACTIVE_TIME) {
+                    laser.blinkStart = frames;
+                }
+
+                // Move and draw laser
+                laser.x -= 3;
+                if (laser.active) {
+                    ctx.fillStyle = 'red';
+                    ctx.fillRect(laser.x, laser.y, LASER_WIDTH, LASER_HEIGHT); // Draw the active laser
+                }
+
+                // Remove off-screen lasers
+                if (laser.x + LASER_WIDTH < 0) {
+                    lasers.splice(index, 1);
+                }
+
+                // Check for collision with bird (if laser is active)
+                if (
+                    laser.active &&
+                    laser.x < 50 + birdWidth &&
+                    laser.x + LASER_WIDTH > 50 &&
+                    birdY < laser.y + LASER_HEIGHT &&
+                    birdY + birdHeight > laser.y
+                ) {
+                    restartGame(); // Bird hit by laser, game over
+                }
+            });
+
+            // Remove off-screen pipes
+            pipes = pipes.filter(pipe => pipe.x + PIPE_WIDTH > 0);
+
+            // Check for collision with walls or ground
+            if (birdY <= 0 || birdY + birdHeight >= canvas.height) {
+                restartGame();
+            }
+
+            // Check for pipe collisions
+            pipes.forEach(pipe => {
+                if (pipe.x < 50 + birdWidth && pipe.x + PIPE_WIDTH > 50) {
+                    if (birdY < pipe.y || birdY + birdHeight > pipe.y + PIPE_GAP) {
+                        restartGame(); // Bird hits pipe
+                    }
+                }
+            });
+
+            // Request next frame
+            frames++;
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Restart the game
+        function restartGame() {
+            birdY = canvas.height / 2;
+            birdVelocity = 0;
+            pipes = [];
+            bullets = [];
+            lasers = [];
+            frames = 0;
+        }
+
+        // Game initialization
+        let frames = 0;
+        gameLoop();
+    </script>
+</body>
+</html>
