@@ -59,22 +59,20 @@
           let deckSize = currentDeck.length / 4;
           let RNGcard = RNG(1, deckSize);
           if (i == 1) {
-            card1.suit = cardsInDeck[RNGcard * 4 - 4];
-            card1.suitstr = suits[cardsInDeck[RNGcard * 4 - 4]];
-            card1.rank = cardsInDeck[RNGcard * 4 - 3];
-            card1.rankstr = ranks[cardsInDeck[RNGcard * 4 - 3]];
-            
-
-            card1.isMultCard = cardsInDeck[RNGcard * 4 - 2];
-            card1.isRedSeal = cardsInDeck[RNGcard * 4 - 1];
+            card1.suit = currentDeck[RNGcard * 4 - 4];
+            card1.suitstr = suits[currentDeck[RNGcard * 4 - 4]];
+            card1.rank = currentDeck[RNGcard * 4 - 3];
+            card1.rankstr = ranks[currentDeck[RNGcard * 4 - 3]];
+            card1.isMultCard = currentDeck[RNGcard * 4 - 2];
+            card1.isRedSeal = currentDeck[RNGcard * 4 - 1];
             currentDeck.splice(RNGcard * 4 - 4, 4);
           } else if (i == 2) {
-            card2.suit = cardsInDeck[RNGcard * 4 - 4];
-            card2.suitstr = suits[cardsInDeck[RNGcard * 4 - 4]];
-            card2.rank = cardsInDeck[RNGcard * 4 - 3];
-            card2.rankstr = ranks[cardsInDeck[RNGcard * 4 - 3]];
-            card2.isMultCard = cardsInDeck[RNGcard * 4 - 2];
-            card2.isRedSeal = cardsInDeck[RNGcard * 4 - 1];
+            card2.suit = currentDeck[RNGcard * 4 - 4];
+            card2.suitstr = suits[currentDeck[RNGcard * 4 - 4]];
+            card2.rank = currentDeck[RNGcard * 4 - 3];
+            card2.rankstr = ranks[currentDeck[RNGcard * 4 - 3]];
+            card2.isMultCard = currentDeck[RNGcard * 4 - 2];
+            card2.isRedSeal = currentDeck[RNGcard * 4 - 1];
             currentDeck.splice(RNGcard * 4 - 4, 4);
           }
 
