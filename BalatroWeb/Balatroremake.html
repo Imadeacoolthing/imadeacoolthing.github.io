@@ -64,6 +64,27 @@
         isSelected: 0,
         cardNum: 1
       }
+      let card3 = {
+        rank: 14,
+        rankstr: "Ace",
+        suit: 1,
+        suitstr: "Clubs",
+        isMultCard: 0,
+        isRedSeal: 0,
+        isSelected: 0,
+        cardNum: 1
+      }
+      let card4 = {
+        rank: 14,
+        rankstr: "Ace",
+        suit: 1,
+        suitstr: "Clubs",
+        isMultCard: 0,
+        isRedSeal: 0,
+        isSelected: 0,
+        cardNum: 1
+      }
+
 
 
 
@@ -106,6 +127,11 @@
         document.getElementById("card1suit").innerHTML = card1.suitstr;
         document.getElementById("card2rank").innerHTML = card2.rankstr;
         document.getElementById("card2suit").innerHTML = card2.suitstr;
+        document.getElementById("card3rank").innerHTML = card2.rankstr;
+        document.getElementById("card3suit").innerHTML = card2.suitstr;
+        document.getElementById("card4rank").innerHTML = card2.rankstr;
+        document.getElementById("card4suit").innerHTML = card2.suitstr;
+     
       }
 
       function selectCard(cardnum) {
@@ -121,8 +147,21 @@
           } else {
             card2.isSelected = 0;
           }
+        } else if (cardnum == 3) {
+          if (card3.isSelected == 0) {
+            card3.isSelected = 1;
+          } else {
+            card3.isSelected = 0;
+          }
+          } else if (cardnum == 4) {
+          if (card4.isSelected == 0) {
+            card4.isSelected = 1;
+          } else {
+            card4.isSelected = 0;
+          }
         }
-      }
+        }
+      
       const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 
       async function playhand() {
@@ -136,7 +175,15 @@
           cardsSelectedrank.push(card2.rank);
           cardsSelectedsuit.push(card2.rank);
         }
-
+        if (card3.isSelected == 1) {
+          cardsSelectedrank.push(card3.rank);
+          cardsSelectedsuit.push(card3.rank);
+        }
+        if (card4.isSelected == 1) {
+          cardsSelectedrank.push(card4.rank);
+          cardsSelectedsuit.push(card4.rank);
+        }
+        
         last = cardsSelectedrank[0];
         for (var i=1; i < cardsSelectedrank.length; i++) {
           if (last == cardsSelectedrank[i]) {
