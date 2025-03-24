@@ -46,13 +46,14 @@
       function RNG(min, max) {
           return Math.random() * (max - min) + min;
       }
-
+      
       function drawCards(isFirstDraw, cards) {
-        let i = 0;  
+        let i = 1;  
         let decksize = cardsInDeck
         while (i <= handSize){
-          let RNGcard = RNG(1,)
-          let deckSize = null;
+          let RNGcard = RNG(1, deckSize)
+          let deckSize = cardsInDeck.length / 4;
+
           i++;
         }
       }
