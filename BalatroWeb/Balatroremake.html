@@ -15,6 +15,8 @@
     <h3>Fire: <span id="fire"></span></h3>
     <button id="card1id" onclick="selectCard(1)"><span id="card1rank"></span> of <span id="card1suit"></span></button>
     <button id="card2id" onclick="selectCard(2)"><span id="card2rank"></span> of <span id="card2suit"></span></button>
+    <button id="card3id" onclick="selectCard(3)"><span id="card3rank"></span> of <span id="card3suit"></span></button>
+    <button id="card4id" onclick="selectCard(4)"><span id="card4rank"></span> of <span id="card4suit"></span></button>
     <br>
     <button onclick="playhand()">Play Hand</button>
    <script>
@@ -22,8 +24,8 @@
       // ranks: 1 for spades, 2 for hearts, 3 for diamonds, 4 for clubs.
       // aces are considered 14
 
-      let cardsInDeck = [1,2,0,0,2,2,0,0,3,2,0,0,4,2,0,0,1,3,0,0,2,3,0,0,3,3,0,0,4,3,0,0];
-      let currentDeck = [1,2,0,0,2,2,0,0,3,2,0,0,4,2,0,0,1,3,0,0,2,3,0,0,3,3,0,0,4,3,0,0];
+      let cardsInDeck = [1,2,0,0,2,2,0,0,3,2,0,0,4,2,0,0,1,3,0,0,2,3,0,0,3,3,0,0,4,3,0,0,1,4,0,0,2,4,0,0,3,4,0,0,4,4,0,0,1,5,0,0,2,5,0,0,3,5,0,0,4,5,0,0,1,6,0,0,2,6,0,0,3,6,0,0,4,6,0,0];
+      let currentDeck = [1,2,0,0,2,2,0,0,3,2,0,0,4,2,0,0,1,3,0,0,2,3,0,0,3,3,0,0,4,3,0,0,1,4,0,0,2,4,0,0,3,4,0,0,4,4,0,0,1,5,0,0,2,5,0,0,3,5,0,0,4,5,0,0,1,6,0,0,2,6,0,0,3,6,0,0,4,6,0,0];
       let amountOfCardsInHands = 0;
       let cardsSelectedrank = [];
       let cardsSelectedsuit = [];
@@ -37,7 +39,7 @@
       }
       const suits = ["err","Spades", "Hearts", "Diamonds", "Clubs"];
       const ranks = ["err","err",2,3,4,5,6,7,8,9,10,"Jack","Queen","King","Ace"]
-      let handSize = 2;
+      let handSize = 4;
       let pair = false;
       let last = 0;
 
