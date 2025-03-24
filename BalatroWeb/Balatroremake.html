@@ -13,26 +13,63 @@
     <h3>Mult: <span id="mult">0</span></h3>
     <h3>Score: <span id="score">0</h3>
     <h3>Fire: <span id="fire"></span></h3>
-    <button id="card1" onclick="selectCard(1)"><span id="card1rank"></span> of <span id="card1suit"></span></button>
-    <script>
+    <button id="card1id" onclick="selectCard(1)"><span id="card1rank"></span> of <span id="card1suit"></span></button>
+    <button id="card2id" onclick="selectCard(2)"><span id="card2rank"></span> of <span id="card2suit"></span></button>
+   <script>
+      
       // ranks: 1 for spades, 2 for hearts, 3 for diamonds, 4 for clubs.
       // aces are considered 14
-      let card1obj = {
+
+      let cardsInDeck = [1,2,0,0,2,2,0,0,3,2,0,0,4,2,0,0,1,3,0,0,2,3,0,0,3,3,0,0,4,3,0,0];
+
+      let handSize = 2;
+
+      let card1 = {
         rank: 14,
         rankstr: "Ace",
         suit: 1,
         suitstr: "Spades",
         isMultCard: 0,
-        isRedSeal: 0
+        isRedSeal: 0,
+        isSelected: 0
+      }
+
+      let card2 = {
+        rank: 14,
+        rankstr: "Ace",
+        suit: 1,
+        suitstr: "Clubs",
+        isMultCard: 0,
+        isRedSeal: 0,
+        isSelected: 0
+      }
+      function RNG(min, max) {
+          return Math.random() * (max - min) + min;
+      }
+
+      function drawCards(isFirstDraw, cards) {
+        let i = 0;  
+        let decksize = cardsInDeck
+        while (i <= handSize){
+          let RNGcard = RNG(1,)
+          let deckSize = null;
+          i++;
+        }
       }
 
       function writecards() {
-        document.getElementById("card1rank").innerHTML = card1obj.rankstr;
-        document.getElementByID("card1suit").innerHTML = card1obj.suitstr;
+        document.getElementById("card1rank").innerHTML = card1.rankstr;
+        document.getElementByID("card1suit").innerHTML = card1.suitstr;
       }
 
       function selectCard(cardnum) {
-
+        if (cardnum == 1) {
+          if (card1.isSelected == 0) {
+            card1.isSelected = 1;
+          } else {
+            card1.isSelected = 0;
+          }
+        }
       }
 
     </script>
