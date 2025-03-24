@@ -237,10 +237,10 @@
         } else if (pokerhand == 0) {
           let max = cardsSelectedrank[0];
           for (let i = 1; i < cardsSelectedrank.length; i++) {
-            if (arr[i] > max) {
-               max = arr[i];
+            if (cardsSelectedrank[i] > max) {
+               max = cardsSelectedrank[i];
+            }
           }
-}
         }
       }
       drawCards();
