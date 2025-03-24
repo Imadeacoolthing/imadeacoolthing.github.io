@@ -54,7 +54,7 @@
       
       function drawCards(isFirstDraw, cards) {
         let i = 1;  
-        let decksize = cardsInDeck
+        
         while (i <= handSize){
           let deckSize = cardsInDeck.length / 4;
           let RNGcard = RNG(1, deckSize);
@@ -65,7 +65,7 @@
             card1.rankstr = ranks[cardsInDeck[RNGcard * 4 - 3]];
             card1.isMultCard = cardsInDeck[RNGcard * 4 - 2];
             card1.isRedSeal = cardsInDeck[RNGcard * 4 - 1];
-
+            currentDeck.splice(RNGcard * 4 - 4, 4);
           } else if (i == 2) {
             card2.suit = cardsInDeck[RNGcard * 4 - 4];
             card2.suitstr = suits[cardsInDeck[RNGcard * 4 - 4]];
@@ -73,6 +73,7 @@
             card2.rankstr = ranks[cardsInDeck[RNGcard * 4 - 3]];
             card2.isMultCard = cardsInDeck[RNGcard * 4 - 2];
             card2.isRedSeal = cardsInDeck[RNGcard * 4 - 1];
+            currentDeck.splice(RNGcard * 4 - 4, 4);
           }
 
           i++;
