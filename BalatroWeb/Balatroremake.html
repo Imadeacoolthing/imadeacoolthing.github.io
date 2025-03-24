@@ -123,8 +123,7 @@
           cardsSelectedsuit.push(card2.rank);
         }
 
-        cardsSelectedrank.sort((a, b) => a - b);
-        cardsSelectedsuit.sort((a, b) => a - b);
+        
         for (var i=1; i < cardsSelectedrank.length; i++) {
           if (last == cardsSelectedrank[i]) {
             pair = true;
