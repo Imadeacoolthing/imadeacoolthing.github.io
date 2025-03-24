@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Balatro Web</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <h3 id="hand"></h3>
+    <h3>Chips: <span id="chips">0</span></h3> 
+    <h3>Mult: <span id="mult">0</span></h3>
+    <h3>Score: <span id="score">0</h3>
+    <h3>Fire: <span id="fire"></span></h3>
+    <button id="card1" onclick="selectCard(1)"><span id="card1rank"></span> of <span id="card1suit"></span></button>
+    <script>
+      // ranks: 1 for spades, 2 for hearts, 3 for diamonds, 4 for clubs.
+      // aces are considered 14
+      let card1obj = {
+        rank: 14,
+        rankstr: "Ace",
+        suit: 1,
+        suitstr: "Spades",
+        isMultCard: 0,
+        isRedSeal: 0
+      }
+
+      function writecards() {
+        document.getElementById("card1rank").innerHTML = card1obj.rankstr;
+        document.getElementByID("card1suit").innerHTML = card1obj.suitstr;
+      }
+
+      function selectCard(cardnum) {
+
+      }
+
+    </script>
+  </body>
+</html>
