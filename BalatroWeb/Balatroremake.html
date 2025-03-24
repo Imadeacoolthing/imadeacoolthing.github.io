@@ -123,13 +123,15 @@
         cardsSelectedrank.sort((a, b) => a - b);
         cardsSelectedsuit.sort((a, b) => a - b);
         for (var i=1; i < cardsSelectedrank.length; i++) {
-          if (last == numbers[i]) {
+          if (last == cardsSelectedrank[i]) {
             pair = true;
             break;
           }
-
-    last = numbers[i];
-}
+          last = cardsSelectedrank[i];
+          
+        }
+        alert(last);
+        alert(pair);
       }
       drawCards();
       writecards();
