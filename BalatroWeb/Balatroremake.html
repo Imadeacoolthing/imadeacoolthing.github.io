@@ -60,7 +60,7 @@
           let RNGcard = RNG(1, deckSize);
           if (i == 1) {
             card1.suit = cardsInDeck[RNGcard * 4 - 4];
-            card1.suitstr = suits[cardsInDeck[RNGcard * 4 - 4]];
+            card1.suitstr = suits[cardsInDeck[RNGcard * 4 - 4] - 1];
             card1.rank = cardsInDeck[RNGcard * 4 - 3];
             card1.rankstr = ranks[cardsInDeck[RNGcard * 4 - 3]];
             
