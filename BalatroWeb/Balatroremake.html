@@ -60,8 +60,7 @@
           let RNGcard = RNG(1, deckSize);
           if (i == 1) {
             card1.suit = cardsInDeck[RNGcard * 4 - 4];
-            //card1.suitstr = suits[cardsInDeck[RNGcard * 4 - 4]];
-            card1.suitstr = cardsInDeck[RNGcard * 4 - 4];
+            card1.suitstr = suits[cardsInDeck[RNGcard * 4 - 4]];
             card1.rank = cardsInDeck[RNGcard * 4 - 3];
             card1.rankstr = ranks[cardsInDeck[RNGcard * 4 - 3]];
             
@@ -85,7 +84,7 @@
 
       function writecards() {
         document.getElementById("card1rank").innerHTML = card1.rankstr;
-        document.getElementByID("card1suit").innerHTML = card1.suitstr;
+        document.getElementById("card1suit").innerHTML = card1.suitstr;
         document.getElementById("card2rank").innerHTML = card2.rankstr;
         document.getElementById("card2suit").innerHTML = card2.suitstr;
       }
