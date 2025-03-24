@@ -27,11 +27,20 @@
       let amountOfCardsInHands = 0;
       let cardsSelectedrank = [];
       let cardsSelectedsuit = [];
+      let pokerhand = "";
+      let mult = 0;
+      let chips = 0;
+      let score = 0;
+      let handlevel = {
+          pair: 1,
+          hc: 1
+      }
       const suits = ["err","Spades", "Hearts", "Diamonds", "Clubs"];
       const ranks = ["err","err",2,3,4,5,6,7,8,9,10,"Jack","Queen","King","Ace"]
       let handSize = 2;
       let pair = false;
       let last = 0;
+
       let card1 = {
         rank: 14,
         rankstr: "Ace",
@@ -112,7 +121,9 @@
           }
         }
       }
-      function playhand() {
+      const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
+
+      async function playhand() {
         cardsSelectedrank = [];
         cardsSelectedsuit = [];
         if (card1.isSelected == 1) {
@@ -135,6 +146,28 @@
         }
         alert(last);
         alert(pair);
+        // high card is 0, pair is 1, two pair is 2, three of a kind is 4, full house is 5.
+        if (pair == 1) {
+          pokerhand = 1;
+        } else {
+          pokerhand = 0;
+        }
+        //pair
+
+        if (pokerhand == 1) {
+          chips = handlevel.pair * 15 + 10;
+          mult = handlevel.pair * 1 + 2;
+          document.getElementById("chips").innerHTML = chips;
+          document.getElementById("mult").innerHTML = mult;
+          await sleep(250);
+          chips += last;
+          document.getElementById("chips").innerHTML = chips;
+          await sleep(250);
+          chips += last;
+          document.getElementById("chips").innerHTML = chips;
+          await sleep(250);
+          document.getElementById("chips").innerHTML = chips;
+        }
       }
       drawCards();
       writecards();
