@@ -116,6 +116,22 @@
             card2.isMultCard = currentDeck[RNGcard * 4 - 2];
             card2.isRedSeal = currentDeck[RNGcard * 4 - 1];
             currentDeck.splice(RNGcard * 4 - 4, 4);
+          } else if (i == 3) {
+            card3.suit = currentDeck[RNGcard * 4 - 4];
+            card3.suitstr = suits[currentDeck[RNGcard * 4 - 4]];
+            card3.rank = currentDeck[RNGcard * 4 - 3];
+            card3.rankstr = ranks[currentDeck[RNGcard * 4 - 3]];
+            card3.isMultCard = currentDeck[RNGcard * 4 - 2];
+            card3.isRedSeal = currentDeck[RNGcard * 4 - 1];
+            currentDeck.splice(RNGcard * 4 - 4, 4);
+          } else if (i == 4) {
+            card4.suit = currentDeck[RNGcard * 4 - 4];
+            card4.suitstr = suits[currentDeck[RNGcard * 4 - 4]];
+            card4.rank = currentDeck[RNGcard * 4 - 3];
+            card4.rankstr = ranks[currentDeck[RNGcard * 4 - 3]];
+            card4.isMultCard = currentDeck[RNGcard * 4 - 2];
+            card4.isRedSeal = currentDeck[RNGcard * 4 - 1];
+            currentDeck.splice(RNGcard * 4 - 4, 4);
           }
 
           i++;
