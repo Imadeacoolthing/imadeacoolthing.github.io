@@ -15,6 +15,8 @@
     <h3>Fire: <span id="fire"></span></h3>
     <button id="card1id" onclick="selectCard(1)"><span id="card1rank"></span> of <span id="card1suit"></span></button>
     <button id="card2id" onclick="selectCard(2)"><span id="card2rank"></span> of <span id="card2suit"></span></button>
+    <br>
+    <button onclick="playhand()">Play Hand</button>
    <script>
       
       // ranks: 1 for spades, 2 for hearts, 3 for diamonds, 4 for clubs.
@@ -48,6 +50,11 @@
         isSelected: 0,
         cardNum: 1
       }
+
+
+
+
+
       function RNG(min, max) {
           return Math.round(Math.random() * (max - min) + min);
       }
@@ -94,6 +101,23 @@
           } else {
             card1.isSelected = 0;
           }
+        } else if (cardnum == 2) {
+          if (card2.isSelected == 0) {
+            card2.isSelected = 1;
+          } else {
+            card2.isSelected = 0;
+          }
+        }
+      }
+      function playhand() {
+        let cardsSelectedrank = [];
+        let cardsSelectedsuit = [];
+        if (card1.isSelected == 1) {
+          cardsSelectedrank.push(card1.rank);
+          cardsSelectedsuit.push(card1.suit);
+        } else if (card2.isSelected == 1) {
+          cardsSelectedrank.push(card2.rank);
+          cardsSelectedsuit.push(card2.rank);
         }
       }
       drawCards();
