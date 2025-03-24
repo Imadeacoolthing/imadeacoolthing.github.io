@@ -155,8 +155,8 @@
         //pair
 
         if (pokerhand == 1) {
-          chips = handlevel.pair * 15 + 10;
-          mult = handlevel.pair * 1 + 2;
+          chips = handlevel.pair - 1 * 15 + 10;
+          mult = handlevel.pair - 1 * 1 + 2;
           document.getElementById("chips").innerHTML = chips;
           document.getElementById("mult").innerHTML = mult;
           await sleep(250);
