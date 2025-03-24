@@ -32,8 +32,8 @@
       let chips = 0;
       let score = 0;
       let handlevel = {
-          pair: 1,
-          hc: 1
+          pair: 0,
+          hc: 0
       }
       const suits = ["err","Spades", "Hearts", "Diamonds", "Clubs"];
       const ranks = ["err","err",2,3,4,5,6,7,8,9,10,"Jack","Queen","King","Ace"]
@@ -155,8 +155,8 @@
         //pair
 
         if (pokerhand == 1) {
-          chips = handlevel.pair - 1 * 15 + 10;
-          mult = handlevel.pair - 1 * 1 + 2;
+          chips = handlevel.pair * 15 + 10;
+          mult = handlevel.pair * 1 + 2;
           document.getElementById("chips").innerHTML = chips;
           document.getElementById("mult").innerHTML = mult;
           await sleep(250);
