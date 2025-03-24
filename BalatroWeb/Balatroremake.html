@@ -62,7 +62,9 @@
             card1.suit = cardsInDeck[RNGcard * 4 - 4];
             card1.suitstr = suits[cardsInDeck[RNGcard * 4 - 4]];
             card1.rank = cardsInDeck[RNGcard * 4 - 3];
-            card1.rankstr = ranks[cardsInDeck[RNGcard * 4 - 3]];
+            //card1.rankstr = ranks[cardsInDeck[RNGcard * 4 - 3]];
+            card1.rankstr = cardsInDeck[RNGcard * 4 - 3];
+
             card1.isMultCard = cardsInDeck[RNGcard * 4 - 2];
             card1.isRedSeal = cardsInDeck[RNGcard * 4 - 1];
             currentDeck.splice(RNGcard * 4 - 4, 4);
