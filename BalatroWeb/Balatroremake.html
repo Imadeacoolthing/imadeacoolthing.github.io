@@ -264,12 +264,21 @@
         //pair
 
         if (pokerhand == 1) {
+          const indices = [];
+          for (let i = 0; i < array.length; i++) {
+            if (array[i] === targetNumber) {
+              indices.push(i);
+            }
+          }
           chips = handlevel.pair * 15 + 10;
           mult = handlevel.pair * 1 + 2;
           document.getElementById("chips").innerHTML = chips;
           document.getElementById("mult").innerHTML = mult;
           await sleep(250);
           chips += last;
+          if (cardsSelectedsuit[indices[0]] == 3 && Jokersheld.Slot1.Id == 2) {
+            mult += 4;
+          }
           document.getElementById("chips").innerHTML = chips;
           await sleep(250);
           chips += last;
