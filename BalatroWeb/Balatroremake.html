@@ -109,7 +109,15 @@
           isConditional: 1,
         }
       }
-
+      
+      let Jokersheld = {
+        Slot1: {
+          Name: "Joker",
+          Desc: "+4 Mult",
+          Id: 1,
+          isConditional: 0,
+        },
+      }
 
 
 
@@ -171,7 +179,7 @@
         document.getElementById("card3suit").innerHTML = card3.suitstr;
         document.getElementById("card4rank").innerHTML = card4.rankstr;
         document.getElementById("card4suit").innerHTML = card4.suitstr;
-     
+        document.getElementById("slot1").innerHTML = Jokersheld.slot1.Name;
       }
 
       function selectCard(cardnum) {
@@ -285,11 +293,19 @@
           chips += max;
           document.getElementById("chips").innerHTML = chips;
           document.getElementById("mult").innerHTML = mult;
-          score = chips * mult;
           await sleep(250);
-          document.getElementById("score").innerHTML = score;
         }
+        if (Jokersheld.Slot1.Id == 1) {
+          mult += 4;
+          document.getElementById("mult").innerHTML = mult;
+          await sleep(250);
+        }
+        score = chips * mult;
+       
+        document.getElementById("score").innerHTML = score;
+        
       }
+
       drawCards();
       writecards();
     </script>
