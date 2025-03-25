@@ -41,6 +41,7 @@
       let mult = 0;
       let chips = 0;
       let score = 0;
+      let suitarr = [];
       let handlevel = {
           pair: 0,
           hc: 0,
@@ -211,6 +212,16 @@
         }
       
       const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
+      
+
+      function getAllIndexes(arr, val) {
+    var indexes = [], i;
+    for(i = 0; i < arr.length; i++)
+        if (arr[i] === val)
+            indexes.push(i);
+    suitarr = indexes;
+}
+
 
       async function playhand() {
         cardsSelectedrank = [];
@@ -270,9 +281,20 @@
           document.getElementById("mult").innerHTML = mult;
           await sleep(250);
           chips += last;
+          getAllIndexes(cardsSelectedrank,last);
+          if (Jokersheld.Slot1.Id == 2) {
+            if (cardsSelectedsuit[suitarr[0]] == 3) {
+                mult += 4;
+            }
+          }
           document.getElementById("chips").innerHTML = chips;
           await sleep(250);
           chips += last;
+          if (Jokersheld.Slot1.Id == 2) {
+            if (cardsSelectedsuit[suitarr[1]] == 3) {
+                mult += 4;
+            }
+          }
           document.getElementById("chips").innerHTML = chips;
           await sleep(250);
           document.getElementById("chips").innerHTML = chips;
