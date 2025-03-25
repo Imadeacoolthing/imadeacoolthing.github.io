@@ -276,9 +276,7 @@
           document.getElementById("chips").innerHTML = chips;
           await sleep(250);
           document.getElementById("chips").innerHTML = chips;
-          score = chips * mult;
-          document.getElementById("score").innerHTML = score;    
-        } else if (pokerhand == 0) {
+          } else if (pokerhand == 0) {
           let max = cardsSelectedrank[0];
           for (let i = 1; i < cardsSelectedrank.length; i++) {
             if (cardsSelectedrank[i] > max) {
