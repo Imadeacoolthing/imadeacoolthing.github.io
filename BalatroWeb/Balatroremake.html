@@ -42,8 +42,10 @@
       let score = 0;
       let handlevel = {
           pair: 0,
-          hc: 0
+          hc: 0,
+          toak: 0
       }
+      let toak = 0;
       const suits = ["err","Spades", "Hearts", "Diamonds", "Clubs"];
       const ranks = ["err","err",2,3,4,5,6,7,8,9,10,"Jack","Queen","King","Ace"]
       let handSize = 4;
@@ -216,10 +218,22 @@
           last = cardsSelectedrank[i];
           
         }
+        const counts = {};
+        for (const element of cardsSelectedrank) {
+          counts[element] = (counts[element] || 0) + 1;
+        }
+
+        for (const element in counts) {
+          if (counts[element] === 3) {
+            toak = 1;
+          }
+        }
         alert(last);
         alert(pair);
         // high card is 0, pair is 1, two pair is 2, three of a kind is 4, full house is 5.
-        if (pair == 1) {
+        if (toak == 1) {
+          pokerhand = 4;
+        } else if (pair == 1) {
           pokerhand = 1;
         } else {
           pokerhand = 0;
@@ -248,6 +262,18 @@
                max = cardsSelectedrank[i];
             }
           }
+          chips = handlevel.hc * 10 + 5;
+          mult = handlevel.hc * 1 + 1;
+          document.getElementById("chips").innerHTML = chips;
+          document.getElementById("mult").innerHTML = mult;
+          await sleep(250);
+          chips += max;
+          document.getElementById("chips").innerHTML = chips;
+          document.getElementById("mult").innerHTML = mult;
+          score = chips * mult;
+          await sleep(250);
+          document.getElementById("score").innerHTML = score;
+          
         }
       }
       drawCards();
