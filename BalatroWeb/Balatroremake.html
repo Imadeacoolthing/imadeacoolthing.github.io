@@ -333,6 +333,8 @@
         if (jokebuy == 1) {
           Jokersheld.Slot1.Id = 1;
           Jokersheld.Slot1.Id = "Joker";
+          Jokersheld.Slot1.Desc = "+4 Mult";
+          Jokersheld.Slot1.isConditional = 0;
         }
       }
       function shop() {
@@ -346,10 +348,12 @@
         jokebuy = 1;
         document.getElementById("buy").innerHTML = "Joker: <br> +4 Mult <br> $4"
       }
-      drawCards();
-      writecards();
       }
-
+      function endshop() {
+        drawCards();
+        writecards();
+      }
+      shop();
     </script>
   </body>
 </html>
