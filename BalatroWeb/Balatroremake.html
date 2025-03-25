@@ -287,6 +287,7 @@
                 mult += 4;
             }
           }
+          document.getElementById("mult").innerHTML = mult;
           document.getElementById("chips").innerHTML = chips;
           await sleep(250);
           chips += last;
@@ -305,6 +306,7 @@
                max = cardsSelectedrank[i];
             }
           }
+          document.getElementById("mult").innerHTML = mult;
           chips = handlevel.hc * 10 + 5;
           mult = handlevel.hc * 1 + 1;
           document.getElementById("chips").innerHTML = chips;
