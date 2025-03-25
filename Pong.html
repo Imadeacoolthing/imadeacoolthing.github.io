@@ -73,7 +73,7 @@
     const canvas = document.getElementById("pong");
     const context = canvas.getContext("2d");
 
-    const paddleWidth = 10, paddleHeight = 100, ballSize = 10, bulletSize = 5;
+    const paddleWidth = 10, paddleHeight = 100, ballSize = 10;
     let ballX = canvas.width / 2, ballY = canvas.height / 2, ballSpeedX = 4, ballSpeedY = 4;
     let paddle1Y = canvas.height / 2 - paddleHeight / 2, paddle2Y = canvas.height / 2 - paddleHeight / 2;
     let paddle1Speed = 0;
@@ -84,30 +84,6 @@
     let playerScore = 0;
     let aiScore = 0;
     const winningScore = 7;
-    let lastShotTime = 0; // For controlling fire rate
-
-    // Bullet class
-    class Bullet {
-      constructor(x, y, speedX, speedY, isPlayer) {
-        this.x = x;
-        this.y = y;
-        this.speedX = speedX;
-        this.speedY = speedY;
-        this.isPlayer = isPlayer; // True if the bullet is fired by the player
-      }
-
-      update() {
-        this.x += this.speedX;
-        this.y += this.speedY;
-      }
-
-      draw() {
-        context.fillStyle = this.isPlayer ? 'green' : 'red';
-        context.fillRect(this.x, this.y, bulletSize, bulletSize);
-      }
-    }
-
-    let bullets = []; // Array to hold bullets
 
     // Create the paddles
     function drawPaddles() {
@@ -197,11 +173,6 @@
       if (paddle2Y + paddleHeight > canvas.height) paddle2Y = canvas.height - paddleHeight;
     }
 
-    // AI shooting
-    
-      }
-    }
-
     // Draw everything on the canvas
     function draw() {
       context.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
@@ -210,31 +181,12 @@
       moveBall();
       movePaddles();
       moveAI();
-      bullets.forEach(bullet => bullet.update()); // Update bullet positions
-      bullets.forEach(bullet => bullet.draw());   // Draw bullets
-      checkBulletCollisions(); // Check if any bullet hits an opponent
       drawScore();
     }
 
     // Draw the score
     function drawScore() {
       document.getElementById("score").textContent = `Player: ${playerScore} | AI: ${aiScore}`;
-    }
-
-    // Check for bullet collisions with paddles
-    function checkBulletCollisions() {
-      bullets.forEach(bullet => {
-        // Check if the bullet hits the player's paddle
-        if (bullet.isPlayer && bullet.x >= canvas.width - paddleWidth - bulletSize && bullet.y >= paddle2Y && bullet.y <= paddle2Y + paddleHeight) {
-          playerScore++;
-          bullets = bullets.filter(b => b !== bullet); // Remove bullet
-        }
-        // Check if the bullet hits the AI's paddle
-        if (!bullet.isPlayer && bullet.x <= paddleWidth && bullet.y >= paddle1Y && bullet.y <= paddle1Y + paddleHeight) {
-          aiScore++;
-          bullets = bullets.filter(b => b !== bullet); // Remove bullet
-        }
-      });
     }
 
     // Game loop
@@ -265,8 +217,6 @@
         paddle1Speed = -6;  // Move left paddle up
       } else if (event.key === "ArrowDown") {
         paddle1Speed = 6;  // Move left paddle down
-      } else if (event.key === "z") {
-        playerShoot();  // Shoot when Z is pressed
       }
       
       // Start the game when "Enter" is pressed
