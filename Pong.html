@@ -198,19 +198,7 @@
     }
 
     // AI shooting
-    function aiShoot() {
-      // AI shoots if the ball is near its paddle
-      if (Math.random() < 0.02) { // AI shoots with low probability
-        bullets.push(new Bullet(canvas.width - paddleWidth - bulletSize, paddle2Y + paddleHeight / 2, -6, 0, false));
-      }
-    }
-
-    // Player shooting
-    function playerShoot() {
-      const now = Date.now();
-      if (now - lastShotTime >= 1000) { // 1 second cooldown
-        bullets.push(new Bullet(paddleWidth, paddle1Y + paddleHeight / 2, 6, 0, true));
-        lastShotTime = now;
+    
       }
     }
 
