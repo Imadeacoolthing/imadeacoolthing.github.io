@@ -147,25 +147,24 @@
       if (paddle1Y + paddleHeight > canvas.height) paddle1Y = canvas.height - paddleHeight;
     }
 
-    // AI logic for moving the right paddle with randomness
+    // AI logic for moving the right paddle with improved behavior
     function moveAI() {
-      // Randomness factor based on difficulty
-      const randomnessFactor = Math.random(); // Generates a value between 0 and 1
+      // AI's basic idea is to follow the ball but smarter based on speed
+      let ballDirectionY = ballY - (paddle2Y + paddleHeight / 2);  // The difference between AI paddle's center and ball
 
-      // AI misses ball based on difficulty
-      if (randomnessFactor > 0.75 && aiSpeed > 4) {  // Hard AI will miss less frequently
-        if (ballY < paddle2Y + paddleHeight / 2) {
-          paddle2Y -= aiSpeed; // Move AI up
-        } else if (ballY > paddle2Y + paddleHeight / 2) {
-          paddle2Y += aiSpeed; // Move AI down
-        }
-      } else {
-        // AI follows the ball if not "missing"
-        if (ballY < paddle2Y + paddleHeight / 2) {
-          paddle2Y -= aiSpeed; // Move AI up
-        } else if (ballY > paddle2Y + paddleHeight / 2) {
-          paddle2Y += aiSpeed; // Move AI down
-        }
+      // If the ball is moving downwards and the AI is not in the correct position, move towards the ball
+      if (ballDirectionY > 0) {
+        paddle2Y += aiSpeed * (ballSpeedY > 0 ? 1 : 0.5);  // Increase speed when the ball is moving down and towards the AI
+      }
+      // If the ball is moving upwards and the AI is not in the correct position, move upwards
+      else if (ballDirectionY < 0) {
+        paddle2Y -= aiSpeed * (ballSpeedY < 0 ? 1 : 0.5);  // Increase speed when the ball is moving up and towards the AI
+      }
+
+      // Introduce some randomness to the AI's movement (based on difficulty)
+      const randomnessFactor = Math.random();
+      if (randomnessFactor > 0.85 && aiSpeed > 4) {  // Hard AI will miss less frequently
+        paddle2Y += (ballDirectionY > 0 ? 1 : -1) * aiSpeed * 0.5;
       }
 
       // Prevent the AI paddle from going out of bounds
@@ -243,32 +242,6 @@
     document.getElementById("hard").addEventListener("click", function() {
       aiSpeed = 7;  // Hard difficulty
     });
-
-    // AI logic for moving the right paddle with improved behavior
-function moveAI() {
-  // AI's basic idea is to follow the ball but smarter based on speed
-  let ballDirectionY = ballY - (paddle2Y + paddleHeight / 2);  // The difference between AI paddle's center and ball
-
-  // If the ball is moving downwards and the AI is not in the correct position, move towards the ball
-  if (ballDirectionY > 0) {
-    paddle2Y += aiSpeed * (ballSpeedY > 0 ? 1 : 0.5);  // Increase speed when the ball is moving down and towards the AI
-  }
-  // If the ball is moving upwards and the AI is not in the correct position, move upwards
-  else if (ballDirectionY < 0) {
-    paddle2Y -= aiSpeed * (ballSpeedY < 0 ? 1 : 0.5);  // Increase speed when the ball is moving up and towards the AI
-  }
-
-  // Introduce some randomness to the AI's movement (based on difficulty)
-  const randomnessFactor = Math.random();
-  if (randomnessFactor > 0.85 && aiSpeed > 4) {  // Hard AI will miss less frequently
-    paddle2Y += (ballDirectionY > 0 ? 1 : -1) * aiSpeed * 0.5;
-  }
-
-  // Prevent the AI paddle from going out of bounds
-  if (paddle2Y < 0) paddle2Y = 0;
-  if (paddle2Y + paddleHeight > canvas.height) paddle2Y = canvas.height - paddleHeight;
-}
-
 
   </script>
 </body>
