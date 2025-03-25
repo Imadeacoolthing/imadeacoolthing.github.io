@@ -221,15 +221,15 @@
         } 
         if (card2.isSelected == 1) {
           cardsSelectedrank.push(card2.rank);
-          cardsSelectedsuit.push(card2.suit);
+          cardsSelectedsuit.push(card2.rank);
         }
         if (card3.isSelected == 1) {
           cardsSelectedrank.push(card3.rank);
-          cardsSelectedsuit.push(card3.suit);
+          cardsSelectedsuit.push(card3.rank);
         }
         if (card4.isSelected == 1) {
           cardsSelectedrank.push(card4.rank);
-          cardsSelectedsuit.push(card4.suit);
+          cardsSelectedsuit.push(card4.rank);
         }
         
         last = cardsSelectedrank[0];
@@ -241,12 +241,12 @@
           last = cardsSelectedrank[i];
           
         }
-        let counts = {};
-        for (let element of cardsSelectedrank) {
+        const counts = {};
+        for (const element of cardsSelectedrank) {
           counts[element] = (counts[element] || 0) + 1;
         }
 
-        for (let element in counts) {
+        for (const element in counts) {
           if (counts[element] === 3) {
             toak = 1;
           }
@@ -264,29 +264,15 @@
         //pair
 
         if (pokerhand == 1) {
-          let indices = [];
-          for (let i = 0; i < cardsSelectedrank.length; i++) {
-            if (array[i] === last) {
-              indices.push(i);
-            }
-          }
           chips = handlevel.pair * 15 + 10;
           mult = handlevel.pair * 1 + 2;
           document.getElementById("chips").innerHTML = chips;
           document.getElementById("mult").innerHTML = mult;
           await sleep(250);
           chips += last;
-          if (cardsSelectedsuit[indices[0]] == 3 && Jokersheld.Slot1.Id == 2) {
-            mult += 4;
-          }
-          document.getElementById("mult").innerHTML = mult;
           document.getElementById("chips").innerHTML = chips;
           await sleep(250);
           chips += last;
-          if (cardsSelectedsuit[indices[1]] == 3 && Jokersheld.Slot1.Id == 2) {
-            mult += 4;
-          }
-          document.getElementById("mult").innerHTML = mult;
           document.getElementById("chips").innerHTML = chips;
           await sleep(250);
           document.getElementById("chips").innerHTML = chips;
@@ -296,22 +282,13 @@
             if (cardsSelectedrank[i] > max) {
                max = cardsSelectedrank[i];
             }
-            let indices = [];
-          for (let i = 0; i < cardsSelectedrank.length; i++) {
-            if (cardsSelectedrank[i] === max) {
-              indices.push(i);
-            }
           }
-        }
           chips = handlevel.hc * 10 + 5;
           mult = handlevel.hc * 1 + 1;
           document.getElementById("chips").innerHTML = chips;
           document.getElementById("mult").innerHTML = mult;
           await sleep(250);
           chips += max;
-          if (cardsSelectedsuit[indices[0]] == 3 && Jokersheld.Slot1.Id == 2) {
-            mult += 4;
-          }
           document.getElementById("chips").innerHTML = chips;
           document.getElementById("mult").innerHTML = mult;
           await sleep(250);
@@ -324,9 +301,9 @@
         score = chips * mult;
        
         document.getElementById("score").innerHTML = score;
+        
       }
-      
-    
+
       drawCards();
       writecards();
     </script>
