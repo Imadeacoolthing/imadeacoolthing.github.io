@@ -26,6 +26,7 @@
     <button id="card3id" onclick="selectCard(3)"> <span id="card3rank"></span> of <span id="card3suit">          </span></button>
     <button id="card4id" onclick="selectCard(4)"> <span id="card4rank"></span> of <span id="card4suit">          </span></button>
     <button id="buy" onclick="buy()"></button>
+    <button id="next" onclick="endshop">next</button>
     <br>
     <button onclick="playhand()">Play Hand</button>
    <script>
@@ -114,9 +115,9 @@
       
       let Jokersheld = {
         Slot1: {
-          Name: "Joker",
-          Desc: "+4 Mult",
-          Id: 1,
+          Name: "",
+          Desc: "",
+          Id: 0,
           isConditional: 0,
         },
       }
@@ -332,12 +333,19 @@
       function buy() {
         if (jokebuy == 1) {
           Jokersheld.Slot1.Id = 1;
-          Jokersheld.Slot1.Id = "Joker";
+          Jokersheld.Slot1.Name = "Joker";
           Jokersheld.Slot1.Desc = "+4 Mult";
           Jokersheld.Slot1.isConditional = 0;
+        } else if (jokebuy == 2) {
+          Jokersheld.Slot1.Id = 2;
+          Jokersheld.Slot1.Name = "Greedy Joker";
+          Jokersheld.Slot1.Desc = "Played diamond cards give +4 Mult when scored";
+          Jokersheld.Slot1.isConditional = 1;
         }
       }
       function shop() {
+      document.getElementById("buy").style.display = "flex";
+      document.getElementById("next").style.display = "flex";
       document.getElementById("card1").style.display = "none";
       document.getElementById("card2").style.display = "none";
       document.getElementById("card3").style.display = "none";
@@ -347,11 +355,21 @@
       if (rng <= 500) {
         jokebuy = 1;
         document.getElementById("buy").innerHTML = "Joker: <br> +4 Mult <br> $4"
+      } else if (rng >= 501) {
+        jokebuy = 2;
+        document.getElementById("buy").innerHTML = "Greedy Joker: <br> Played diamond cards <br> give +4 Mult when scored. $4" 
       }
       }
       function endshop() {
         drawCards();
         writecards();
+        document.getElementById("card1").style.display = "flex";
+        document.getElementById("card2").style.display = "flex";
+        document.getElementById("card3").style.display = "flex";
+        document.getElementById("card4").style.display = "flex";
+        document.getElementById("buy").style.display = "none";
+        document.getElementById("next").style.display = "none";
+        
       }
       shop();
     </script>
