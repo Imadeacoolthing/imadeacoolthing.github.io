@@ -43,6 +43,7 @@
       let mult = 0;
       let chips = 0;
       let score = 0;
+      let jokebuy = 0;
       let suitarr = [];
       let handlevel = {
           pair: 0,
@@ -351,7 +352,7 @@
       document.getElementById("card3").style.display = "none";
       document.getElementById("card4").style.display = "none";
       let rng = Math.random() * 1000;
-      let jokebuy = 0;
+      
       if (rng <= 500) {
         jokebuy = 1;
         document.getElementById("buy").innerHTML = "Joker: <br> +4 Mult <br> $4"
