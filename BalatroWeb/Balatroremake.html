@@ -25,8 +25,6 @@
     <button id="card2id" onclick="selectCard(2)"> <span id="card2rank"></span> of <span id="card2suit">          </span></button>
     <button id="card3id" onclick="selectCard(3)"> <span id="card3rank"></span> of <span id="card3suit">          </span></button>
     <button id="card4id" onclick="selectCard(4)"> <span id="card4rank"></span> of <span id="card4suit">          </span></button>
-    <button id="buy" onclick="buy()"></button>
-    <button id="next" onclick="endshop">next</button>
     <br>
     <button onclick="playhand()">Play Hand</button>
    <script>
@@ -43,7 +41,6 @@
       let mult = 0;
       let chips = 0;
       let score = 0;
-      let jokebuy = 0;
       let suitarr = [];
       let handlevel = {
           pair: 0,
@@ -116,9 +113,9 @@
       
       let Jokersheld = {
         Slot1: {
-          Name: "",
-          Desc: "",
-          Id: 0,
+          Name: "Joker",
+          Desc: "+4 Mult",
+          Id: 2,
           isConditional: 0,
         },
       }
@@ -331,48 +328,9 @@
         document.getElementById("score").innerHTML = score;
         
       }
-      function buy() {
-        if (jokebuy == 1) {
-          Jokersheld.Slot1.Id = 1;
-          Jokersheld.Slot1.Name = "Joker";
-          Jokersheld.Slot1.Desc = "+4 Mult";
-          Jokersheld.Slot1.isConditional = 0;
-        } else if (jokebuy == 2) {
-          Jokersheld.Slot1.Id = 2;
-          Jokersheld.Slot1.Name = "Greedy Joker";
-          Jokersheld.Slot1.Desc = "Played diamond cards give +4 Mult when scored";
-          Jokersheld.Slot1.isConditional = 1;
-        }
-      }
-      function shop() {
-      document.getElementById("buy").style.display = "block";
-      document.getElementById("next").style.display = "block";
-      document.getElementById("card1").style.display = "none";
-      document.getElementById("card2").style.display = "none";
-      document.getElementById("card3").style.display = "none";
-      document.getElementById("card4").style.display = "none";
-      let rng = Math.random() * 1000;
-      
-      if (rng <= 500) {
-        jokebuy = 1;
-        document.getElementById("buy").innerHTML = "Joker: <br> +4 Mult <br> $4"
-      } else if (rng >= 501) {
-        jokebuy = 2;
-        document.getElementById("buy").innerHTML = "Greedy Joker: <br> Played diamond cards <br> give +4 Mult when scored. $4" 
-      }
-      }
-      function endshop() {
-        drawCards();
-        writecards();
-        document.getElementById("card1").style.display = "block";
-        document.getElementById("card2").style.display = "block";
-        document.getElementById("card3").style.display = "block";
-        document.getElementById("card4").style.display = "block";
-        document.getElementById("buy").style.display = "none";
-        document.getElementById("next").style.display = "none";
-        
-      }
-      shop();
+
+      drawCards();
+      writecards();
     </script>
   </body>
 </html>
