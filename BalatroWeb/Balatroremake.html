@@ -350,7 +350,7 @@
       document.getElementById("card2").style.display = "none";
       document.getElementById("card3").style.display = "none";
       document.getElementById("card4").style.display = "none";
-      let rng = RNG(1,1000);
+      let rng = Math.random() * 1000;
       let jokebuy = 0;
       if (rng <= 500) {
         jokebuy = 1;
