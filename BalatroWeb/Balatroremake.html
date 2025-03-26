@@ -251,17 +251,18 @@
         let toakcount = 1;
         let lasttoak = cardsSelectedrank[0];
         for (let i = 1; i < cardsSelectedrank.length; i++) {
-          for (let i = 1; i < cardsSelectedrank.length; i++) {
-            if (lasttoak == cardsSelectedrank[i]) {
+          for (let b = i; b < cardsSelectedrank.length; b++) {
+            if (lasttoak == cardsSelectedrank[b]) {
               toakcount++;
             }
             if (toakcount == 3) {
-              toak = 1;
+              toak = 1; 
               toaknum = lasttoak;
               break;
             }
           }
-          lasttoak = cardsSelectedrank[i] 
+          lasttoak = cardsSelectedrank[i];
+          toakcount = 1;
         }
 
         alert(last);
