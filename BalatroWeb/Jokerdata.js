@@ -58,5 +58,13 @@ let Jokers = {
       Cost: 4,
       Rare: 1,
     },
+    Crazy_J: {
+      Name: "Crazy Joker",
+      Desc: "+12 Mult if played hand contains a Straight",
+      Id: 9,
+      Cost: 4,
+      Rare: 1,
+    },
+    Droll_J: {}
 
   }
