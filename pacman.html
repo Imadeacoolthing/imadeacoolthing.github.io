@@ -17,4 +17,21 @@
 
         canvas {
             border: 2px solid white;
-            background-color:
+            background-color: black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="500" height="500"></canvas>
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+
+        // Player's attributes (Pac-Man)
+        let player = { x: canvas.width / 2, y: canvas.height / 2, size: 40, speed: 5 };
+
+        // Movement keys
+        let keys = {};
+
+        document.addEventListener("keydown", (e) => keys[e.key] = true);
+        document.addEventListener("keyup", (e) => keys[e.key] = false);
