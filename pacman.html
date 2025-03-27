@@ -24,9 +24,13 @@
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
         
-        let player = { x: 50, y: 50, size: 20, speed: 5 };
-        let ghost = { x: 200, y: 200, size: 20, speed: 2 };
+        let player = { x: 200, y: 200, size: 20, speed: 5 };
+        let ghosts = [
+            { x: 200, y: 200, size: 20, speed: 2, color: "red" }
+        ];
         let keys = {};
+        let ghostColors = ["blue", "pink", "orange"];
+        let ghostSpawnIndex = 0;
 
         document.addEventListener("keydown", (e) => keys[e.key] = true);
         document.addEventListener("keyup", (e) => keys[e.key] = false);
@@ -38,14 +42,47 @@
             if (keys['d'] && player.x < canvas.width - player.size) player.x += player.speed;
         }
 
-        function moveGhost() {
-            if (Math.abs(player.x - ghost.x) > Math.abs(player.y - ghost.y)) {
-                if (player.x > ghost.x) ghost.x += ghost.speed;
-                else ghost.x -= ghost.speed;
-            } else {
-                if (player.y > ghost.y) ghost.y += ghost.speed;
-                else ghost.y -= ghost.speed;
+        function moveGhosts() {
+            ghosts.forEach(ghost => {
+                if (Math.abs(player.x - ghost.x) > Math.abs(player.y - ghost.y)) {
+                    if (player.x > ghost.x) ghost.x += ghost.speed;
+                    else ghost.x -= ghost.speed;
+                } else {
+                    if (player.y > ghost.y) ghost.y += ghost.speed;
+                    else ghost.y -= ghost.speed;
+                }
+            });
+        }
+
+        function spawnGhost() {
+            if (ghostSpawnIndex < ghostColors.length) {
+                ghosts.push({
+                    x: Math.random() * (canvas.width - 20),
+                    y: Math.random() * (canvas.height - 20),
+                    size: 20,
+                    speed: 2,
+                    color: ghostColors[ghostSpawnIndex]
+                });
+                ghostSpawnIndex++;
             }
+        }
+
+        function checkCollision() {
+            ghosts.forEach(ghost => {
+                let dx = player.x - ghost.x;
+                let dy = player.y - ghost.y;
+                let distance = Math.sqrt(dx * dx + dy * dy);
+                if (distance < player.size) {
+                    resetGame();
+                }
+            });
+        }
+
+        function resetGame() {
+            player.x = 200;
+            player.y = 200;
+            ghosts = [{ x: 200, y: 200, size: 20, speed: 2, color: "red" }];
+            ghostSpawnIndex = 0;
         }
 
         function draw() {
@@ -56,18 +93,24 @@
             ctx.arc(player.x + player.size / 2, player.y + player.size / 2, player.size / 2, 0.2 * Math.PI, 1.8 * Math.PI);
             ctx.lineTo(player.x + player.size / 2, player.y + player.size / 2);
             ctx.fill();
-
-            ctx.fillStyle = "red";
-            ctx.fillRect(ghost.x, ghost.y, ghost.size, ghost.size);
+            
+            ghosts.forEach(ghost => {
+                ctx.fillStyle = ghost.color;
+                ctx.beginPath();
+                ctx.arc(ghost.x + ghost.size / 2, ghost.y + ghost.size / 2, ghost.size / 2, 0, 2 * Math.PI);
+                ctx.fill();
+            });
         }
 
         function update() {
             movePlayer();
-            moveGhost();
+            moveGhosts();
+            checkCollision();
             draw();
             requestAnimationFrame(update);
         }
 
+        setInterval(spawnGhost, 15000); // Spawn a new ghost every 15 seconds up to 4 ghosts
         update();
     </script>
 </body>
