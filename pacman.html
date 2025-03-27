@@ -29,8 +29,6 @@
             { x: 200, y: 200, size: 20, speed: 2, color: "red" }
         ];
         let keys = {};
-        let ghostColors = ["blue", "pink", "orange"];
-        let ghostSpawnIndex = 0;
 
         document.addEventListener("keydown", (e) => keys[e.key] = true);
         document.addEventListener("keyup", (e) => keys[e.key] = false);
@@ -54,19 +52,6 @@
             });
         }
 
-        function spawnGhost() {
-            if (ghostSpawnIndex < ghostColors.length) {
-                ghosts.push({
-                    x: Math.random() * (canvas.width - 20),
-                    y: Math.random() * (canvas.height - 20),
-                    size: 20,
-                    speed: 2,
-                    color: ghostColors[ghostSpawnIndex]
-                });
-                ghostSpawnIndex++;
-            }
-        }
-
         function checkCollision() {
             ghosts.forEach(ghost => {
                 let dx = player.x - ghost.x;
@@ -82,7 +67,6 @@
             player.x = 200;
             player.y = 200;
             ghosts = [{ x: 200, y: 200, size: 20, speed: 2, color: "red" }];
-            ghostSpawnIndex = 0;
         }
 
         function draw() {
@@ -110,7 +94,6 @@
             requestAnimationFrame(update);
         }
 
-        setInterval(spawnGhost, 15000); // Spawn a new ghost every 15 seconds up to 4 ghosts
         update();
     </script>
 </body>
