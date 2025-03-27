@@ -4,6 +4,10 @@ let Jokers = {
       Name: "Joker",
       Desc: "+4 Mult",
       Id: 1,
+      // The cost in $
+      Cost: 2,
+      // 1 is common, 2 is uncommon, 3 is rare, 4 is legendary.
+      Rare: 1,
     },
     Greedy_J: {
       Name: "Greedy Joker",
