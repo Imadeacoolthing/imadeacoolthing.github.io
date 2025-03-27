@@ -51,5 +51,12 @@ let Jokers = {
       Cost: 4,
       Rare: 1,
     },
-    
+    Mad_J: {
+      Name: "Mad Joker",
+      Desc: "+10 Mult if played hand contains a Two Pair",
+      Id: 8,
+      Cost: 4,
+      Rare: 1,
+    },
+
   }
