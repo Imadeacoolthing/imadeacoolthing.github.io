@@ -17,10 +17,12 @@ let Jokers = {
     },
     Wrathful_J: {
       Name: "Wrathful Joker",
-      Desc: "Played cards with  Club suit give +3 Mult when scored",
+      Desc: "Played cards with  Spade suit give +3 Mult when scored",
       Id: 4,
     },
     Gluttonous_J: {
-      
-    }
+     Name: "Gluttonous Joker",
+     Desc: "Played cards with  Club suit give +3 Mult when scored",
+     Id: 5,
+    },
   }
