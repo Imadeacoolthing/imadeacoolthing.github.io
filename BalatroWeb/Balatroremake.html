@@ -262,9 +262,19 @@ function desc(arr) {
 
         let sortnums = desc(cardsSelectedrank);
         let num = 0;
+        let count = 1;
         for (var i = 0; i < sortnums.length; i++) {
           num = sortnums[i];
-          
+          count = 1;
+          for (var j = i + 1; j < sortnums.length; i++) {
+            if (sortnums[j] == num) {
+              count ++;
+              if (count == 3) {
+                toak = 1;
+                break;
+              }
+            } 
+          }
         }
 
 
