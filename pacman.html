@@ -17,39 +17,4 @@
 
         canvas {
             border: 2px solid white;
-            background-color: black;
-        }
-    </style>
-</head>
-<body>
-    <canvas id="gameCanvas" width="500" height="500"></canvas>
-    <script>
-        const canvas = document.getElementById("gameCanvas");
-        const ctx = canvas.getContext("2d");
-
-        // Player's attributes
-        let player = { x: 250, y: 250, size: 20, speed: 5 };
-
-        // Red block (enemy) attributes
-        let redBlock = { x: 100, y: 100, size: 20, speed: 2 };
-
-        // Movement keys
-        let keys = {};
-
-        document.addEventListener("keydown", (e) => keys[e.key] = true);
-        document.addEventListener("keyup", (e) => keys[e.key] = false);
-
-        // Restrict movement inside the box
-        function movePlayer() {
-            if (keys['w'] && player.y > 70) player.y -= player.speed; // Stop at top of border
-            if (keys['s'] && player.y < canvas.height - 30) player.y += player.speed; // Stop at bottom of border
-            if (keys['a'] && player.x > 70) player.x -= player.speed; // Stop at left of border
-            if (keys['d'] && player.x < canvas.width - 30) player.x += player.speed; // Stop at right of border
-        }
-
-        // Move the red block (enemy) towards the player
-        function moveRedBlock() {
-            if (player.x > redBlock.x) redBlock.x += redBlock.speed;
-            if (player.x < redBlock.x) redBlock.x -= redBlock.speed;
-            if (player.y > redBlock.y) redBlock.y += redBlock.speed;
-            if (player.y < redBlock.y) red
+            background-color:
