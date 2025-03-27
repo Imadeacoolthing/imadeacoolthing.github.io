@@ -44,5 +44,12 @@ let Jokers = {
       Cost: 3,
       Rare: 1,
     },
+    Zany_J: {
+      Name: "Zany Joker",
+      Desc: "+12 Mult if played hand contains a Three of a Kind",
+      Id: 7,
+      Cost: 4,
+      Rare: 1,
+    },
     
   }
