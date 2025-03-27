@@ -261,13 +261,13 @@ function desc(arr) {
         alert(pair);
 
         let sortnums = desc(cardsSelectedrank);
-        let num = 0;
+        let toaknum = 0;
         let count = 1;
         for (var i = 0; i < sortnums.length; i++) {
-          num = sortnums[i];
+          toaknum = sortnums[i];
           count = 1;
           for (var j = i + 1; j < sortnums.length; i++) {
-            if (sortnums[j] == num) {
+            if (sortnums[j] == toaknum) {
               count ++;
               if (count == 3) {
                 toak = 1;
