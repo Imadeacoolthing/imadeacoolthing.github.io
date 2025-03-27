@@ -174,6 +174,7 @@
         document.getElementById("card4rank").innerHTML = card4.rankstr;
         document.getElementById("card4suit").innerHTML = card4.suitstr;
         document.getElementById("slot1").innerHTML = Jokersheld.Slot1.Name;
+        document.getElementById("slot2").innerHTML = Jokersheld.Slot2.Name;
       }
 
       function selectCard(cardnum) {
@@ -216,6 +217,14 @@
 }
 
 
+function desc(arr) {
+  arr.sort(function(a, b) {
+    return b - a;
+  });
+  return arr;
+  }
+
+
       async function playhand() {
         cardsSelectedrank = [];
         cardsSelectedsuit = [];
@@ -246,27 +255,19 @@
           
         }
         
-        let toak = 0;
-        let toaknum = 0;
-        let toakcount = 1;
-        let lasttoak = cardsSelectedrank[0];
-        for (let i = 1; i < cardsSelectedrank.length; i++) {
-          for (let b = i; b < cardsSelectedrank.length; b++) {
-            if (lasttoak == cardsSelectedrank[b]) {
-              toakcount++;
-            }
-            if (toakcount == 3) {
-              toak = 1; 
-              toaknum = lasttoak;
-              break;
-            }
-          }
-          lasttoak = cardsSelectedrank[i];
-          toakcount = 1;
-        }
+
 
         alert(last);
         alert(pair);
+
+        let sortnums = desc(cardsSelectedrank);
+        let num = 0;
+        for (var i = 0; i < sortnums.length; i++) {
+          num = sortnums[i];
+          
+        }
+
+
         // high card is 0, pair is 1, two pair is 2, three of a kind is 4, full house is 5.
         if (toak == 1) {
           pokerhand = 4;
@@ -305,6 +306,26 @@
                 mult += 3;
             }
           }
+          if (Jokersheld.Slot2.Id == 2) {
+            if (cardsSelectedsuit[suitarr[0]] == 3) {
+                mult += 3;
+            }
+          }
+          if (Jokersheld.Slot2.Id == 3) {
+            if (cardsSelectedsuit[suitarr[0]] == 2) {
+                mult += 3;
+            }
+          }
+          if (Jokersheld.Slot2.Id == 4) {
+            if (cardsSelectedsuit[suitarr[0]] == 1) {
+                mult += 3;
+            }
+          }
+          if (Jokersheld.Slot2.Id == 5) {
+            if (cardsSelectedsuit[suitarr[0]] == 4) {
+                mult += 3;
+            }
+          }
           document.getElementById("mult").innerHTML = mult;
           document.getElementById("chips").innerHTML = chips;
           await sleep(250);
@@ -325,6 +346,26 @@
             }
           }
           if (Jokersheld.Slot1.Id == 5) {
+            if (cardsSelectedsuit[suitarr[1]] == 4) {
+                mult += 3;
+            }
+          }
+          if (Jokersheld.Slot2.Id == 2) {
+            if (cardsSelectedsuit[suitarr[1]] == 3) {
+                mult += 3;
+            }
+          }
+          if (Jokersheld.Slot2.Id == 3) {
+            if (cardsSelectedsuit[suitarr[1]] == 2) {
+                mult += 3;
+            }
+          }
+          if (Jokersheld.Slot2.Id == 4) {
+            if (cardsSelectedsuit[suitarr[1]] == 1) {
+                mult += 3;
+            }
+          }
+          if (Jokersheld.Slot2.Id == 5) {
             if (cardsSelectedsuit[suitarr[1]] == 4) {
                 mult += 3;
             }
