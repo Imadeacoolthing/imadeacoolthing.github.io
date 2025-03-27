@@ -289,8 +289,146 @@ function desc(arr) {
           pokerhand = 0;
         }
         //pair
-
-        if (pokerhand == 1) {
+        if (pokerhand == 4) {
+          chips = handlevel.toak * 30 + 20;
+          mult = handlevel.toak * 2 + 3;
+          document.getElementById("chips").innerHTML = chips;
+          document.getElementById("mult").innerHTML = mult;
+          await sleep(250);
+          chips += toaknum;
+          getAllIndexes(cardsSelectedrank,toaknum);
+          if (Jokersheld.Slot1.Id == 2) {
+            if (cardsSelectedsuit[suitarr[0]] == 3) {
+                mult += 3;
+            }
+          }
+          if (Jokersheld.Slot1.Id == 3) {
+            if (cardsSelectedsuit[suitarr[0]] == 2) {
+                mult += 3;
+            }
+          }
+          if (Jokersheld.Slot1.Id == 4) {
+            if (cardsSelectedsuit[suitarr[0]] == 1) {
+                mult += 3;
+            }
+          }
+          if (Jokersheld.Slot1.Id == 5) {
+            if (cardsSelectedsuit[suitarr[0]] == 4) {
+                mult += 3;
+            }
+          }
+          if (Jokersheld.Slot2.Id == 2) {
+            if (cardsSelectedsuit[suitarr[0]] == 3) {
+                mult += 3;
+            }
+          }
+          if (Jokersheld.Slot2.Id == 3) {
+            if (cardsSelectedsuit[suitarr[0]] == 2) {
+                mult += 3;
+            }
+          }
+          if (Jokersheld.Slot2.Id == 4) {
+            if (cardsSelectedsuit[suitarr[0]] == 1) {
+                mult += 3;
+            }
+          }
+          if (Jokersheld.Slot2.Id == 5) {
+            if (cardsSelectedsuit[suitarr[0]] == 4) {
+                mult += 3;
+            }
+          }
+          document.getElementById("mult").innerHTML = mult;
+          document.getElementById("chips").innerHTML = chips;
+          await sleep(250);
+          chips += toaknum;
+          if (Jokersheld.Slot1.Id == 2) {
+            if (cardsSelectedsuit[suitarr[1]] == 3) {
+                mult += 3;
+            }
+          }
+          if (Jokersheld.Slot1.Id == 3) {
+            if (cardsSelectedsuit[suitarr[1]] == 2) {
+                mult += 3;
+            }
+          }
+          if (Jokersheld.Slot1.Id == 4) {
+            if (cardsSelectedsuit[suitarr[1]] == 1) {
+                mult += 3;
+            }
+          }
+          if (Jokersheld.Slot1.Id == 5) {
+            if (cardsSelectedsuit[suitarr[1]] == 4) {
+                mult += 3;
+            }
+          }
+          if (Jokersheld.Slot2.Id == 2) {
+            if (cardsSelectedsuit[suitarr[1]] == 3) {
+                mult += 3;
+            }
+          }
+          if (Jokersheld.Slot2.Id == 3) {
+            if (cardsSelectedsuit[suitarr[1]] == 2) {
+                mult += 3;
+            }
+          }
+          if (Jokersheld.Slot2.Id == 4) {
+            if (cardsSelectedsuit[suitarr[1]] == 1) {
+                mult += 3;
+            }
+          }
+          if (Jokersheld.Slot2.Id == 5) {
+            if (cardsSelectedsuit[suitarr[1]] == 4) {
+                mult += 3;
+            }
+          }
+          document.getElementById("mult").innerHTML = mult;
+          document.getElementById("chips").innerHTML = chips;
+          await sleep(250);
+          chips += toaknum;
+          if (Jokersheld.Slot1.Id == 2) {
+            if (cardsSelectedsuit[suitarr[1]] == 3) {
+                mult += 3;
+            }
+          }
+          if (Jokersheld.Slot1.Id == 3) {
+            if (cardsSelectedsuit[suitarr[1]] == 2) {
+                mult += 3;
+            }
+          }
+          if (Jokersheld.Slot1.Id == 4) {
+            if (cardsSelectedsuit[suitarr[1]] == 1) {
+                mult += 3;
+            }
+          }
+          if (Jokersheld.Slot1.Id == 5) {
+            if (cardsSelectedsuit[suitarr[1]] == 4) {
+                mult += 3;
+            }
+          }
+          if (Jokersheld.Slot2.Id == 2) {
+            if (cardsSelectedsuit[suitarr[1]] == 3) {
+                mult += 3;
+            }
+          }
+          if (Jokersheld.Slot2.Id == 3) {
+            if (cardsSelectedsuit[suitarr[1]] == 2) {
+                mult += 3;
+            }
+          }
+          if (Jokersheld.Slot2.Id == 4) {
+            if (cardsSelectedsuit[suitarr[1]] == 1) {
+                mult += 3;
+            }
+          }
+          if (Jokersheld.Slot2.Id == 5) {
+            if (cardsSelectedsuit[suitarr[1]] == 4) {
+                mult += 3;
+            }
+          }
+          document.getElementById("mult").innerHTML = mult;
+          document.getElementById("chips").innerHTML = chips;
+          await sleep(250);
+        } else if (pokerhand == 1) {
           chips = handlevel.pair * 15 + 10;
           mult = handlevel.pair * 1 + 2;
           document.getElementById("chips").innerHTML = chips;
@@ -382,6 +520,7 @@ function desc(arr) {
                 mult += 3;
             }
           }
+
           document.getElementById("mult").innerHTML = mult; 
           document.getElementById("chips").innerHTML = chips;
           await sleep(250);
