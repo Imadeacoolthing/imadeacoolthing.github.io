@@ -65,6 +65,8 @@ let Jokers = {
       Cost: 4,
       Rare: 1,
     },
-    Droll_J: {}
+    Droll_J: {
+      Name: 
+    }
 
   }
