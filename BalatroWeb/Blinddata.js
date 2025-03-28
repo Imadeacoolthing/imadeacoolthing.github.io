@@ -2,13 +2,13 @@
 let blinds = {
     Small_blind: {
         Name: "Small Blind",
-        // How many times base
+    1x
         Req: 1,
-        // The first ante it shows up on
+    1
         Minimum_Ante: 1,
-        // Amnt of money earned
+    $3
         Money_Earned: 3,
-        // The number it is on the chart
+    1
         Id: 1,
     },
 }
