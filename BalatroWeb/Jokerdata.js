@@ -107,7 +107,15 @@ let Jokers = {
       Cost: 4,
       Rare: 1,
     },
+    Half_J: {
+      Name:"Half Joker",
+      Desc:"+20 Mult if played hand contains 3 or fewer cards",
+      Id: 16,
+      Cost: 5,
+      Rare: 1,
+    },
     
+
 
 
   }
