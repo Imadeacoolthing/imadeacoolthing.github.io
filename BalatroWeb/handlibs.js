@@ -1,5 +1,4 @@
-async function trigger(cardnum, triggernum) {
- await sleep(250);
+function trigger(cardnum, triggernum) {
 chips += cardnum;
 getAllIndexes(cardsSelectedrank,toaknum);
 if (Jokersheld.Slot1.Id == 2) {
