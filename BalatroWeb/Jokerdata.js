@@ -79,7 +79,7 @@ let Jokers = {
       Cost: 3,
       Rare: 1,
     },
-    Wily: {
+    Wily_J: {
       Name:"Wily Joker",
       Desc:"+100 Chips if played hand contains a Three of a Kind",
       Id: 12,
@@ -87,5 +87,6 @@ let Jokers = {
       Rare: 1,
     },
     
+
 
   }
