@@ -66,7 +66,19 @@ let Jokers = {
       Rare: 1,
     },
     Droll_J: {
-      Name: 
-    }
+      Name: "Droll Joker",
+      Desc:"+10 Mult if played hand contains a Flush",
+      Id: 10,
+      Cost: 4,
+      Rare: 1,
+    },
+    Sly_J: {
+      Name:"Sly Joker",
+      Desc:"+50 Chips if played hand contains a Pair",
+      Id: 11,
+      Cost: 3,
+      Rare: 1,
+    },
+    
 
   }
