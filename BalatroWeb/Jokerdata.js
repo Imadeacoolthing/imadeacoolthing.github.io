@@ -30,7 +30,7 @@ let Jokers = {
       Cost: 5,
       Rare: 1,
     },
-    Gluttonous: {
+    Glutt: {
      Name: "Gluttonous Joker",
      Desc: "Played cards with  Club suit give +3 Mult when scored",
      Id: 5,

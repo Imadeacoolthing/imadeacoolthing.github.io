@@ -34,6 +34,7 @@
     <button id="card4id" onclick="selectCard(4)"> <span id="card4rank"></span> of <span id="card4suit">          </span></button>
     <br>
     <button onclick="playhand()">Play Hand</button>
+    <script src="Jokerdata_inuse.js"></script>
    <script>
       
       // ranks: 1 for spades, 2 for hearts, 3 for diamonds, 4 for clubs.
@@ -597,11 +598,17 @@ function desc(arr) {
           document.getElementById("rare1").innerHTML = Jokers.Lustly.Rare;
           buy1id = Jokers.Lustly.Id;
         } else if (rng <= 800) {
-          document.getElementById("buy").innerHTML = Jokers.Lusty.Name;
-          document.getElementById("desc1").innerHTML = Jokers.Lustly.Desc;
-          document.getElementById("price1").innerHTML = Jokers.Lustly.Cost;
-          document.getElementById("rare1").innerHTML = Jokers.Lustly.Rare;
-          buy1id = Jokers.Lustly.Id;
+          document.getElementById("buy").innerHTML = Jokers.Wrathful.Name;
+          document.getElementById("desc1").innerHTML = Jokers.Wrathful.Desc;
+          document.getElementById("price1").innerHTML = Jokers.Wrathful.Cost;
+          document.getElementById("rare1").innerHTML = Jokers.Wrathful.Rare;
+          buy1id = Jokers.Wrathful.Id;
+        } else if (rng <= 1000) {
+          document.getElementById("buy").innerHTML = Jokers.Wrathful.Name;
+          document.getElementById("desc1").innerHTML = Jokers.Wrathful.Desc;
+          document.getElementById("price1").innerHTML = Jokers.Wrathful.Cost;
+          document.getElementById("rare1").innerHTML = Jokers.Wrathful.Rare;
+          buy1id = Jokers.Wrathful.Id;
         }
       }
       function endshop(){
@@ -613,6 +620,6 @@ function desc(arr) {
       writecards();
       }
     </script>
-    <script src="Jokerdata_inuse.js"></script>
+    
   </body>
 </html>
