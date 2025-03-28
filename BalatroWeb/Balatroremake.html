@@ -21,7 +21,7 @@
   </head>
   <body>
     <h3 id="slot1"></h3> <h3 id="slot2"></h3> <h3 id="slot3"></h3> <h3 id="slot4"></h3> <h3 id="slot5"></h3>
-    <button onclick="buy()"><span id="buy"></span> <span id="desc1"></span> <span id="price1"></span> Rarity: <span id="rare1"></span></button>
+    <button onclick="buy()"><span id="buy">:</span> <span id="desc1"></span> $<span id="price1"></span> Rarity: <span id="rare1"></span></button>
     <button id="next" onclick="next()">next</button>
     <h3 id="hand"></h3>
     <h3 id="chipsloc">Chips: <span id="chips">0</span></h3> 
@@ -592,7 +592,7 @@ function desc(arr) {
           document.getElementById("rare1").innerHTML = Jokers.Greedy.Rare;
           buy1id = Jokers.Greedy.Id;
         } else if (rng <= 600) {
-          document.getElementById("buy").innerHTML = Jokers.Lusty.Name;
+          document.getElementById("buy").innerHTML = Jokers.Lustly.Name;
           document.getElementById("desc1").innerHTML = Jokers.Lustly.Desc;
           document.getElementById("price1").innerHTML = Jokers.Lustly.Cost;
           document.getElementById("rare1").innerHTML = Jokers.Lustly.Rare;
