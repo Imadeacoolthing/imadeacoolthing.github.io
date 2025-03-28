@@ -21,6 +21,8 @@
   </head>
   <body>
     <h3 id="slot1"></h3> <h3 id="slot2"></h3> <h3 id="slot3"></h3> <h3 id="slot4"></h3> <h3 id="slot5"></h3>
+    <button id="buy" onclick="buy()"></button>
+    <button id="next" onclick="next()">next</button>
     <h3 id="hand"></h3>
     <h3 id="chipsloc">Chips: <span id="chips">0</span></h3> 
     <h3 id="multloc">Mult: <span id="mult">0</span></h3>
@@ -567,9 +569,24 @@ function desc(arr) {
         document.getElementById("score").innerHTML = score;
         
       }
-
+      function shop() {
+      document.getElementById("card1id").hidden = true;
+      document.getElementById("card2id").hidden = true;
+      document.getElementById("card3id").hidden = true;
+      document.getElementById("card4id").hidden = true;
+      document.getElementById("next").hidden = false;
+      document.getElementById("buy").hidden = false;
+      let rng = RNG(1,1000);
+      
+      }
+      function endshop(){
+      document.getElementById("card1id").hidden = false;
+      document.getElementById("card2id").hidden = false;
+      document.getElementById("card3id").hidden = false;
+      document.getElementById("card4id").hidden = false;
       drawCards();
       writecards();
+      }
     </script>
   </body>
 </html>
