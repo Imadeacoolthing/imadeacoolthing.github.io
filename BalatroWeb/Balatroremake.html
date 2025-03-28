@@ -234,6 +234,10 @@ function desc(arr) {
   }
 
 
+
+
+
+
       async function playhand() {
         cardsSelectedrank = [];
         cardsSelectedsuit = [];
@@ -292,151 +296,32 @@ function desc(arr) {
           pokerhand = 4;
           alert("toak");
           alert(toaknum);
+          last = toaknum;
         } else if (pair == 1) {
           pokerhand = 1;
+          last = last;
         } else {
           pokerhand = 0;
+          let max = cardsSelectedrank[0];
+          for (let i = 1; i < cardsSelectedrank.length; i++) {
+            if (cardsSelectedrank[i] > max) {
+               max = cardsSelectedrank[i];
+            }
+          }
+          last = max; 
         }
         //toak
+        getAllIndexes(cardsSelectedrank,last);
         if (pokerhand == 4) {
           chips = handlevel.toak * 20 + 30;
           mult = handlevel.toak * 2 + 3;
           document.getElementById("chips").innerHTML = chips;
           document.getElementById("mult").innerHTML = mult;
+          trigger(last, 0);
           await sleep(250);
-          chips += toaknum;
-          getAllIndexes(cardsSelectedrank,toaknum);
-          if (Jokersheld.Slot1.Id == 2) {
-            if (cardsSelectedsuit[suitarr[0]] == 3) {
-                mult += 3;
-            }
-          }
-          if (Jokersheld.Slot1.Id == 3) {
-            if (cardsSelectedsuit[suitarr[0]] == 2) {
-                mult += 3;
-            }
-          }
-          if (Jokersheld.Slot1.Id == 4) {
-            if (cardsSelectedsuit[suitarr[0]] == 1) {
-                mult += 3;
-            }
-          }
-          if (Jokersheld.Slot1.Id == 5) {
-            if (cardsSelectedsuit[suitarr[0]] == 4) {
-                mult += 3;
-            }
-          }
-          if (Jokersheld.Slot2.Id == 2) {
-            if (cardsSelectedsuit[suitarr[0]] == 3) {
-                mult += 3;
-            }
-          }
-          if (Jokersheld.Slot2.Id == 3) {
-            if (cardsSelectedsuit[suitarr[0]] == 2) {
-                mult += 3;
-            }
-          }
-          if (Jokersheld.Slot2.Id == 4) {
-            if (cardsSelectedsuit[suitarr[0]] == 1) {
-                mult += 3;
-            }
-          }
-          if (Jokersheld.Slot2.Id == 5) {
-            if (cardsSelectedsuit[suitarr[0]] == 4) {
-                mult += 3;
-            }
-          }
-          document.getElementById("mult").innerHTML = mult;
-          document.getElementById("chips").innerHTML = chips;
+          trigger(last, 1);
           await sleep(250);
-          chips += toaknum;
-          if (Jokersheld.Slot1.Id == 2) {
-            if (cardsSelectedsuit[suitarr[1]] == 3) {
-                mult += 3;
-            }
-          }
-          if (Jokersheld.Slot1.Id == 3) {
-            if (cardsSelectedsuit[suitarr[1]] == 2) {
-                mult += 3;
-            }
-          }
-          if (Jokersheld.Slot1.Id == 4) {
-            if (cardsSelectedsuit[suitarr[1]] == 1) {
-                mult += 3;
-            }
-          }
-          if (Jokersheld.Slot1.Id == 5) {
-            if (cardsSelectedsuit[suitarr[1]] == 4) {
-                mult += 3;
-            }
-          }
-          if (Jokersheld.Slot2.Id == 2) {
-            if (cardsSelectedsuit[suitarr[1]] == 3) {
-                mult += 3;
-            }
-          }
-          if (Jokersheld.Slot2.Id == 3) {
-            if (cardsSelectedsuit[suitarr[1]] == 2) {
-                mult += 3;
-            }
-          }
-          if (Jokersheld.Slot2.Id == 4) {
-            if (cardsSelectedsuit[suitarr[1]] == 1) {
-                mult += 3;
-            }
-          }
-          if (Jokersheld.Slot2.Id == 5) {
-            if (cardsSelectedsuit[suitarr[1]] == 4) {
-                mult += 3;
-            }
-          }
-          document.getElementById("mult").innerHTML = mult;
-          document.getElementById("chips").innerHTML = chips;
-          await sleep(250);
-          chips += toaknum;
-          if (Jokersheld.Slot1.Id == 2) {
-            if (cardsSelectedsuit[suitarr[2]] == 3) {
-                mult += 3;
-            }
-          }
-          if (Jokersheld.Slot1.Id == 3) {
-            if (cardsSelectedsuit[suitarr[2]] == 2) {
-                mult += 3;
-            }
-          }
-          if (Jokersheld.Slot1.Id == 4) {
-            if (cardsSelectedsuit[suitarr[2]] == 1) {
-                mult += 3;
-            }
-          }
-          if (Jokersheld.Slot1.Id == 5) {
-            if (cardsSelectedsuit[suitarr[2]] == 4) {
-                mult += 3;
-            }
-          }
-          if (Jokersheld.Slot2.Id == 2) {
-            if (cardsSelectedsuit[suitarr[2]] == 3) {
-                mult += 3;
-            }
-          }
-          if (Jokersheld.Slot2.Id == 3) {
-            if (cardsSelectedsuit[suitarr[2]] == 2) {
-                mult += 3;
-            }
-          }
-          if (Jokersheld.Slot2.Id == 4) {
-            if (cardsSelectedsuit[suitarr[2]] == 1) {
-                mult += 3;
-            }
-          }
-          if (Jokersheld.Slot2.Id == 5) {
-            if (cardsSelectedsuit[suitarr[2]] == 4) {
-                mult += 3;
-            }
-          }
-          document.getElementById("mult").innerHTML = mult;
-          document.getElementById("chips").innerHTML = chips;
-          await sleep(250);
+          trigger(last, 2);
         } else if (pokerhand == 1) {
           chips = handlevel.pair * 15 + 10;
           mult = handlevel.pair * 1 + 2;
@@ -535,12 +420,7 @@ function desc(arr) {
           await sleep(250);
           document.getElementById("chips").innerHTML = chips;
           } else if (pokerhand == 0) {
-          let max = cardsSelectedrank[0];
-          for (let i = 1; i < cardsSelectedrank.length; i++) {
-            if (cardsSelectedrank[i] > max) {
-               max = cardsSelectedrank[i];
-            }
-          }
+          
           document.getElementById("mult").innerHTML = mult;
           chips = handlevel.hc * 10 + 5;
           mult = handlevel.hc * 1 + 1;
@@ -571,5 +451,6 @@ function desc(arr) {
       drawCards();
       writecards();
     </script>
+    <script src="handlibs.js"></script>
   </body>
 </html>
