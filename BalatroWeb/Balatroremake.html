@@ -21,7 +21,7 @@
   </head>
   <body>
     <h3 id="slot1"></h3> <h3 id="slot2"></h3> <h3 id="slot3"></h3> <h3 id="slot4"></h3> <h3 id="slot5"></h3>
-    <button id="buy" onclick="buy()"></button>
+    <button id="buy" onclick="buy()"> <span id="desc1"></span> <span id="price1"></span> Rarity: <span id="rare1"></span></button>
     <button id="next" onclick="next()">next</button>
     <h3 id="hand"></h3>
     <h3 id="chipsloc">Chips: <span id="chips">0</span></h3> 
@@ -51,6 +51,7 @@
       let pokerhand = "";
       let mult = 0;
       let chips = 0;
+      let buy1id = 0;
       let score = 0;
       let suitarr = [];
       let handlevel = {
@@ -111,15 +112,15 @@
       
       let Jokersheld = {
         Slot1: {
-          Name: "Joker",
-          Desc: "+4 Mult",
-          Id: 2,
+          Name: "",
+          Desc: "",
+          Id: 0,
           isConditional: 0,
         },
         Slot2: {
-          Name: "Joker",
-          Desc: "+4 Mult",
-          Id: 2,
+          Name: "",
+          Desc: "",
+          Id: 0,
           isConditional: 0,
         },
       }
@@ -577,7 +578,31 @@ function desc(arr) {
       document.getElementById("next").hidden = false;
       document.getElementById("buy").hidden = false;
       let rng = RNG(1,1000);
-      
+        if (rng <= 200) {
+          document.getElementById("buy").innerHTML = Jokers.Joker.Name;
+          document.getElementById("desc1").innerHTML = Jokers.Joker.Desc;
+          document.getElementById("price1").innerHTML = Jokers.Joker.Cost;
+          document.getElementById("rare1").innerHTML = Jokers.Joker.Rare;
+          buy1id = Jokers.Joker.Id;
+        } else if (rng <= 400) {
+          document.getElementById("buy").innerHTML = Jokers.Greedy.Name;
+          document.getElementById("desc1").innerHTML = Jokers.Greedy.Desc;
+          document.getElementById("price1").innerHTML = Jokers.Greedy.Cost;
+          document.getElementById("rare1").innerHTML = Jokers.Greedy.Rare;
+          buy1id = Jokers.Greedy.Id;
+        } else if (rng <= 600) {
+          document.getElementById("buy").innerHTML = Jokers.Lusty.Name;
+          document.getElementById("desc1").innerHTML = Jokers.Lustly.Desc;
+          document.getElementById("price1").innerHTML = Jokers.Lustly.Cost;
+          document.getElementById("rare1").innerHTML = Jokers.Lustly.Rare;
+          buy1id = Jokers.Lustly.Id;
+        } else if (rng <= 800) {
+          document.getElementById("buy").innerHTML = Jokers.Lusty.Name;
+          document.getElementById("desc1").innerHTML = Jokers.Lustly.Desc;
+          document.getElementById("price1").innerHTML = Jokers.Lustly.Cost;
+          document.getElementById("rare1").innerHTML = Jokers.Lustly.Rare;
+          buy1id = Jokers.Lustly.Id;
+        }
       }
       function endshop(){
       document.getElementById("card1id").hidden = false;
@@ -588,5 +613,6 @@ function desc(arr) {
       writecards();
       }
     </script>
+    <script src="Jokerdata_inuse.js"></script>
   </body>
 </html>

@@ -86,36 +86,7 @@ let Jokers = {
       Cost: 4,
       Rare: 1,
     },
-    Clever: {
-      Name:"Clever Joker",
-      Desc:"+80 Chips if played hand contains a Two Pair",
-      Id: 13,
-      Cost: 4,
-      Rare: 1,
-    },
-    Devious: {
-      Name:"Devious Joker",
-      Desc:"+100 Chips if played hand contains a Straight",
-      Id: 14,
-      Cost: 4,
-      Rare: 1,
-    },
-    Crafty: {
-      Name:"Crafty Joker",
-      Desc:"+80 Chips if played hand contains a Flush",
-      Id: 15,
-      Cost: 4,
-      Rare: 1,
-    },
-    Half: {
-      Name:"Half Joker",
-      Desc:"+20 Mult if played hand contains 3 or fewer cards",
-      Id: 16,
-      Cost: 5,
-      Rare: 1,
-    },
     
 
-    // Stop adding _J after all jokers, It's making my job harder.
 
   }
