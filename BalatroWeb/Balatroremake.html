@@ -33,7 +33,7 @@
     <button id="card3id" onclick="selectCard(3)"> <span id="card3rank"></span> of <span id="card3suit">          </span></button>
     <button id="card4id" onclick="selectCard(4)"> <span id="card4rank"></span> of <span id="card4suit">          </span></button>
     <br>
-    <button onclick="playhand()">Play Hand</button>
+    <button id="hand" onclick="playhand()">Play Hand</button>
     <script src="Jokerdata_inuse.js"></script>
    <script>
       
@@ -582,6 +582,7 @@ function desc(arr) {
       document.getElementById("card4id").hidden = true;
       document.getElementById("next").hidden = false;
       document.getElementById("buy").hidden = false;
+      document.getElementById("hand").hidden = true;
       let rng = RNG(1,1000);
         if (rng <= 200) {
           document.getElementById("buy").innerHTML = Jokers.Joker.Name;
@@ -620,6 +621,9 @@ function desc(arr) {
       document.getElementById("card2id").hidden = false;
       document.getElementById("card3id").hidden = false;
       document.getElementById("card4id").hidden = false;
+      document.getElementById("next").hidden = true;
+      document.getElementById("buy").hidden = true;
+      document.getElementById("hand").hidden = false;
       drawCards();
       writecards();
       }
