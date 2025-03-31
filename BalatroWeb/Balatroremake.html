@@ -664,7 +664,7 @@ function desc(arr) {
       writecards();
       }
       function buy() {
-        if (slot1id == 0) {
+        if (Jokersheld.Slot1.Id == 0) {
         if (buy1id == 1) {
           Jokersheld.Slot1.Id = Jokers.Joker.Id;
           Jokersheld.Slot1.Name = Jokers.Joker.Name;
@@ -686,7 +686,7 @@ function desc(arr) {
           Jokersheld.Slot1.Name = Jokers.Glutt.Name;
           Jokersheld.Slot1.Desc = Jokers.Glutt.Desc;
         }
-      } else if (slot2id == 0) {
+      } else if (Jokersheld.Slot1.Id == 0) {
         if (buy1id == 1) {
           Jokersheld.Slot2.Id = Jokers.Joker.Id;
           Jokersheld.Slot2.Name = Jokers.Joker.Name;
