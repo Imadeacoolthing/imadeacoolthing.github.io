@@ -261,6 +261,9 @@ function desc(arr) {
           cardsSelectedrank.push(card4.rank);
           cardsSelectedsuit.push(card4.suit);
         }
+        if (cardsSelectedrank.length > 0) {
+          
+        
         
         last = cardsSelectedrank[0];
         for (var i=1; i < cardsSelectedrank.length; i++) {
@@ -610,7 +613,10 @@ function desc(arr) {
        
         document.getElementById("score").innerHTML = score;
         
+      } else {
+        alert("select a card.")
       }
+    }
       function shop() {
       document.getElementById("card1id").hidden = true;
       document.getElementById("card2id").hidden = true;
