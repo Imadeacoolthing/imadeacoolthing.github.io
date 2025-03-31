@@ -21,7 +21,9 @@
   </head>
   <body>
     <h3 id="slot1"></h3> <h3 id="slot2"></h3> <h3 id="slot3"></h3> <h3 id="slot4"></h3> <h3 id="slot5"></h3>
+    <div id="buyjoke">
     <button onclick="buy()"><span id="buy">:</span> <span id="desc1"></span> $<span id="price1"></span> Rarity: <span id="rare1"></span></button>
+    </div>
     <button id="next" onclick="next()">next</button>
     <h3 id="hand"></h3>
     <h3 id="chipsloc">Chips: <span id="chips">0</span></h3> 
@@ -609,6 +611,11 @@ function desc(arr) {
           document.getElementById("mult").innerHTML = mult;
           await sleep(250);
         }
+        if (Jokersheld.Slot2.Id == 1) {
+          mult += 4;
+          document.getElementById("mult").innerHTML = mult;
+          await sleep(250);
+        }
         score = chips * mult;
        
         document.getElementById("score").innerHTML = score;
@@ -623,7 +630,7 @@ function desc(arr) {
       document.getElementById("card3id").hidden = true;
       document.getElementById("card4id").hidden = true;
       document.getElementById("next").hidden = false;
-      document.getElementById("buy").hidden = false;
+      document.getElementById("buyjoke").hidden = false;
       document.getElementById("hand").hidden = true;
       let rng = RNG(1,1000);
         if (rng <= 200) {
@@ -664,7 +671,7 @@ function desc(arr) {
       document.getElementById("card3id").hidden = false;
       document.getElementById("card4id").hidden = false;
       document.getElementById("next").hidden = true;
-      document.getElementById("buy").hidden = true;
+      document.getElementById("buyjoke").hidden = true;
       document.getElementById("hand").hidden = false;
       drawCards();
       writecards();
