@@ -556,20 +556,56 @@ function desc(arr) {
           document.getElementById("mult").innerHTML = mult;
           await sleep(250);
           chips += max;
+          getAllIndexes(cardsSelectedrank,max);
+          if (Jokersheld.Slot1.Id == 2) {
+            if (cardsSelectedsuit[suitarr[0]] == 3) {
+                mult += 3;
+            }
+          }
+          if (Jokersheld.Slot1.Id == 3) {
+            if (cardsSelectedsuit[suitarr[0]] == 2) {
+                mult += 3;
+            }
+          }
+          if (Jokersheld.Slot1.Id == 4) {
+            if (cardsSelectedsuit[suitarr[0]] == 1) {
+                mult += 3;
+            }
+          }
+          if (Jokersheld.Slot1.Id == 5) {
+            if (cardsSelectedsuit[suitarr[0]] == 4) {
+                mult += 3;
+            }
+          }
+          if (Jokersheld.Slot2.Id == 2) {
+            if (cardsSelectedsuit[suitarr[0]] == 3) {
+                mult += 3;
+            }
+          }
+          if (Jokersheld.Slot2.Id == 3) {
+            if (cardsSelectedsuit[suitarr[0]] == 2) {
+                mult += 3;
+            }
+          }
+          if (Jokersheld.Slot2.Id == 4) {
+            if (cardsSelectedsuit[suitarr[0]] == 1) {
+                mult += 3;
+            }
+          }
+          if (Jokersheld.Slot2.Id == 5) {
+            if (cardsSelectedsuit[suitarr[0]] == 4) {
+                mult += 3;
+            }
+          }
           document.getElementById("chips").innerHTML = chips;
           document.getElementById("mult").innerHTML = mult;
           await sleep(250);
         }
         if (Jokersheld.Slot1.Id == 1) {
-          mult += 3;
+          mult += 4;
           document.getElementById("mult").innerHTML = mult;
           await sleep(250);
         }
-        if (Jokersheld.Slot1.Id == 1) {
-            if (cardsSelectedsuit[suitarr[0]] == 2) {
-                mult += 3;
-            }
-          }
         score = chips * mult;
        
         document.getElementById("score").innerHTML = score;
