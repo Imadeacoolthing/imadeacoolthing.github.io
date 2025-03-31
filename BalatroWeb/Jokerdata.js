@@ -114,6 +114,28 @@ let Jokers = {
       Cost: 5,
       Rare: 1,
     },
+    Stencil: {
+      Name: "Joker Stencil",
+      Desc: "X1 Mult for each empty Joker slot. Joker Stencil included",
+      Id: 17,
+      Cost: 8,
+      Rare: 2,
+    },
+    Four: {
+      Name: "Four Fingers",
+      Desc: "All Flushes and Straights can be made with 4 cards",
+      Id: 18,
+      Cost: 7,
+      Rare: 2,
+    },
+    Mime: {
+      Name: "Mime",
+      Desc: "Retrigger all card held in hand abilities",
+      Id: 19,
+      Cost: 5,
+      Rare: 2,
+    },
+    
     
 
     // Stop adding _J after all jokers, It's making my job harder.
