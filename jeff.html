@@ -161,10 +161,16 @@ function stopHum(){try{hum&&hum.stop()}catch(e){}hum=null;musicOff()}
 let bgm;function musicOn(){if(!D.tc)return;try{if(!bgm){bgm=new Audio(MUSIC);bgm.loop=true;bgm.volume=.6}bgm.currentTime=0;bgm.play().catch(()=>{})}catch(e){}}
 function musicOff(){try{bgm&&bgm.pause()}catch(e){}}
 function title(){$('nn').textContent=night+1;$('reset').classList.toggle('hide',night===0);$('title').classList.remove('hide')}
+function mkRoster(){
+ const P=CHARS.find(c=>c.n==='Pershouse'),C=CHARS.find(c=>c.n==='Ceresini');
+ if(D.tc)return Array.from({length:16},()=>P);
+ if(D.bill==='k'){const K={...P,n:'Katie',q:['Per my last email, Bill.','No, it’s fine. Really. Bill.','Wow. Bold choice, Bill.','I’m not mad, Bill. I’m just disappointed.','Sure, Bill. Whatever you think.','Bless your heart, Bill.','Oh, you’re still here, Bill?','Interesting strategy. For you.','It’s fine. I’ll just do it myself.','We all noticed, Bill.']};return Array.from({length:10},()=>K)}
+ if(D.bill==='c'){const K={...C,q:['Stop saying Bill.','Please stop saying Bill.','Stop. Saying. Bill.','Bill. I said stop saying Bill.']};return Array.from({length:60},()=>K)}
+ return CHARS}
 function begin(){
  $('title').classList.add('hide');$('end').classList.add('hide');$('scare').classList.add('hide');
  S={t:0,power:100,L:false,R:false,lL:false,lR:false,cam:false,sel:'stage',dead:false,out:false,outT:0,
-    ch:(D.tc?Array.from({length:16},()=>CHARS.find(c=>c.n==='Pershouse')):CHARS).map(c=>({...c,room:'stage'}))};
+    ch:mkRoster().map(c=>({...c,room:'stage'}))};
  $('nl').textContent='Night '+(night+1);
  $('cam').classList.add('hide');
  clearInterval(tick1);clearInterval(tick2);
@@ -176,7 +182,7 @@ function sec(){if(S&&S.qte)return;
  if(S.dead)return;
  S.t++;
  if(!S.out){S.power-=(0.1+0.2*((S.L?1:0)+(S.R?1:0)+(S.cam?1:0)+(S.lL?1:0)+(S.lR?1:0))+0.02*night)*D.dr;if(S.power<=0){S.power=0;S.out=true;S.L=S.R=S.lL=S.lR=S.cam=false;$('cam').classList.add('hide');S.outT=0;beep(60,1.2,'sawtooth')}}
- else{S.outT++;beep(70+S.outT*12,.4,'sine',.2);if(S.outT===6)beep(220,.4,'triangle');if(S.outT>=10)return kill(CHARS[1])}
+ else{S.outT++;beep(70+S.outT*12,.4,'sine',.2);if(S.outT===6)beep(220,.4,'triangle');if(S.outT>=10)return kill(S.ch[1])}
  if(S.t>=240)return win();
  draw();
 }
@@ -193,7 +199,7 @@ function move(){if(S&&S.qte)return;
   }else{
    let nx=c.room==='stage'?(Math.random()<.5?'dining':'kitchen'):LANE[c.room];
    if(c.n.startsWith('Piccolo')&&c.room==='kitchen')nx=Math.random()<.5?'doorL':'doorR';
-   if(nx){c.room=nx;c.mv=S.t;say(c,Math.random()<(D.tc?.08:.5));if(S.cam||Math.random()<.4)beep(140,.12,'sine',.12,/L$/.test(nx)?-1:/R$/.test(nx)?1:0)}
+   if(nx){c.room=nx;c.mv=S.t;say(c,Math.random()<(D.bill==='c'?.03:D.bill==='k'?.25:D.tc?.08:.5));if(S.cam||Math.random()<.4)beep(140,.12,'sine',.12,/L$/.test(nx)?-1:/R$/.test(nx)?1:0)}
   }
  }
  draw();
@@ -302,7 +308,7 @@ function drawCam(){
   if(id==='office')m='🔦';
   else if(id.startsWith('door')){const k=SIDE[id];m=(S[k]?'🔒':'')+(S['l'+k]&&S.ch.some(x=>x.room===id)?'<span class="sh">👤</span>':'')}
   else{tag='button';const sn=S.seen[id];
-   if(S.sel===id)m=sc.length?'<span class="sh">'+'👤'.repeat(sc.length)+'</span>':'';
+   if(S.sel===id)m=sc.length?'<span class="sh">'+(sc.length>5?'👤×'+sc.length:'👤'.repeat(sc.length))+'</span>':'';
    
    }
   return '<'+tag+' class="mc'+(S.sel===id?' on':'')+(id==='office'?' me':'')+'" style="grid-column:'+c+';grid-row:'+r+'"'+(tag==='button'?' data-r="'+id+'"':'')+'><small>'+lb+'</small>'+m+'</'+tag+'>'}).join('');
@@ -312,7 +318,7 @@ function drawCam(){
  
  
  
- $('feed').innerHTML=(here.length?'<div class="sh">'+here.map(c=>c.e).join(' ')+'</div>':'<div style="opacity:.25">·</div>')+'<small>CAM · '+ROOMS[S.sel]+(here.length?' · '+here.map(c=>c.n).join(', '):' · empty')+'</small>';
+ $('feed').innerHTML=(here.length?'<div class="sh">'+(here.length>6?'👤×'+here.length:here.map(c=>c.e).join(' '))+'</div>':'<div style="opacity:.25">·</div>')+'<small>CAM · '+ROOMS[S.sel]+(here.length?' · '+(here.length>6?here.length+' here':here.map(c=>c.n).join(', ')):' · empty')+'</small>';
 }
 function bind(id,fn){$(id).addEventListener('click',()=>{if(!S||S.dead)return;fn();beep(300,.05);draw()})}
 bind('bL',()=>{if(!S.out)S.L=!S.L});bind('bR',()=>{if(!S.out)S.R=!S.R});
@@ -332,8 +338,10 @@ const DIFF=[
  {n:'Concert',d:'The standard performance.',m:.85,tick:4000,dr:1,br:.2,win:1000,mg:3,sp:1},
  {n:'Marching Season',d:'Faster, hungrier, louder. No lights.',nl:1,m:1.3,tick:3200,dr:1.2,br:.35,win:800,mg:4,sp:.85},
  {n:'Band Camp',d:'Basically impossible. No lights. Nobody survives band camp.',nl:1,m:3,tick:1500,dr:1.7,br:.85,win:350,mg:5,sp:.65},
- {n:'Tomahawk Chop',d:'Sixteen Pershouses. No Ceresinis. Go Noles.',tc:1,m:.45,tick:3500,dr:1.1,br:.12,win:900,mg:4,sp:.9}];
-let di=1;try{const sv=localStorage.getItem('c5d');if(sv!==null&&+sv>=0&&+sv<5)di=+sv}catch(e){}
+ {n:'Tomahawk Chop',d:'Sixteen Pershouses. No Ceresinis. Go Noles.',tc:1,m:.45,tick:3500,dr:1.1,br:.12,win:900,mg:4,sp:.9},
+ {n:'Bill Mode: Katies',d:'Ten Katies. Passive aggressive and mean. Bill.',bill:'k',m:.55,tick:3500,dr:1,br:.15,win:1000,mg:3,sp:1},
+ {n:'Bill Mode: Ceresinis',d:'Sixty Ceresinis. They want you to stop saying Bill.',bill:'c',m:.15,tick:4000,dr:1,br:.06,win:1000,mg:2,sp:1.1}];
+let di=1;try{const sv=localStorage.getItem('c5d');if(sv!==null&&+sv>=0&&+sv<7)di=+sv}catch(e){}
 let D=DIFF[di];
 function drawD(){$('diffs').innerHTML=DIFF.map((x,i)=>'<button data-i="'+i+'" class="'+(i===di?'on':'')+(i>=3?' warn':'')+'">'+x.n+'</button>').join('');$('dd').textContent=D.d}
 $('diffs').addEventListener('click',e=>{const b=e.target.closest('[data-i]');if(b){di=+b.dataset.i;D=DIFF[di];try{localStorage.setItem('c5d',di)}catch(e){}drawD()}});
