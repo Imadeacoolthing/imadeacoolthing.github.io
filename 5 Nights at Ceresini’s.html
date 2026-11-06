@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>5 Nights at Ceresini’s</title>
+<style>
+:root{--bg:#140d0b;--panel:#241612;--ink:#f2e6c9;--dim:#9a8a70;--red:#c8321e;--green:#4f8a5b;--amber:#e0a030;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0;background:var(--bg);color:var(--ink);font-family:Georgia,'Times New Roman',serif}
+body{display:flex;justify-content:center}
+#app{width:100%;max-width:520px;height:100%;display:flex;flex-direction:column;padding:10px;gap:8px;position:relative}
+.screen{position:absolute;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:safe center;overflow-y:auto;text-align:center;padding:16px;gap:10px;z-index:5}
+.screen>*{flex-shrink:0}
+#diffs{display:grid;grid-template-columns:1fr 1fr;gap:6px;width:100%;max-width:320px}
+#diffs button{font-size:.85rem;padding:8px 4px}
+#dd{min-height:2.6em}
+.hide{display:none!important}
+h1{font-size:2.4rem;line-height:1;margin:0;font-style:italic;color:var(--red);text-shadow:2px 2px 0 #000}
+h1 small{display:block;font-size:1rem;color:var(--ink);font-style:normal;margin-bottom:6px}
+p{margin:0;color:var(--dim);line-height:1.45;max-width:36ch}
+button{font:inherit;color:var(--ink);background:var(--panel);border:2px solid #4a2c22;border-radius:10px;padding:12px 10px;font-size:1rem;cursor:pointer}
+button:active{transform:scale(.97)}
+button.go{background:var(--red);border-color:#e8553f;font-size:1.2rem;padding:14px 32px}
+button.on{background:var(--green);border-color:#78b585}
+button.warn.on{background:var(--red);border-color:#e8553f}
+button.lit.on{background:var(--amber);color:#140d0b;border-color:#f5c860}
+button:focus-visible{outline:3px solid var(--amber)}
+button:disabled{opacity:.35;cursor:not-allowed}
+#hud{display:flex;justify-content:space-between;align-items:baseline;font-size:.95rem;flex-wrap:wrap}
+#hud b{font-size:1.5rem}
+#pw{height:10px;background:#000;border-radius:5px;overflow:hidden;border:1px solid #4a2c22}
+#pwf{height:100%;width:100%;background:var(--green);transition:width .3s,background .3s}
+#view{flex:1;min-height:0;border:2px solid #4a2c22;border-radius:12px;background:repeating-conic-gradient(#2a1410 0 25%,#1d0f0c 0 50%) 0 0/48px 48px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:space-between}
+.door{width:30%;height:88%;display:flex;align-items:center;justify-content:center;font-size:4rem;position:relative;transition:background .25s}
+.door::after{content:"";position:absolute;inset:0;background:#3b3b44;border:3px solid #6b6b78;transform:translateY(-101%);transition:transform .25s}
+.door.shut::after{transform:none}
+.door.lit{background:#d9c98a33}
+.door span{position:relative;z-index:1;filter:brightness(0) drop-shadow(0 0 3px #000)}
+.sh{filter:brightness(0) drop-shadow(0 0 6px #9fe0a8)}
+#scare .shd{filter:brightness(0) drop-shadow(0 0 16px #fff)}
+#scare.bc{background:#000;font-size:8rem;animation:sh .05s infinite,fl .2s steps(2) infinite}
+@keyframes fl{0%{background:#000}50%{background:#b00}100%{background:#fff}}
+#scare .qd{font-size:1.3rem;font-style:italic;color:#f2e6c9;max-width:80%;text-align:center;margin-top:20px}
+.door.shut span{display:none}
+.dl{position:absolute;bottom:6px;left:2px;right:2px;text-align:center;font-size:.72rem;line-height:1.25;z-index:2;color:var(--ink);text-shadow:0 0 4px #000,0 0 4px #000;font-family:ui-monospace,Menlo,monospace}
+.door.shut .dl{color:#fff}
+.dl.alert{color:#ff6a50;font-weight:bold}
+#hint{font-size:.8rem;color:var(--dim);text-align:center;line-height:1.35}
+@keyframes dg{0%,100%{box-shadow:inset 0 0 0 0 #ff2a0000}50%{box-shadow:inset 0 0 36px 8px #ff2a00cc}}
+@keyframes dgb{50%{background:var(--red);border-color:#ff8a70}}
+.door.danger{animation:dg .5s infinite}
+button.danger{animation:dgb .5s infinite}
+@media (prefers-reduced-motion:reduce){.door.danger{animation:none;box-shadow:inset 0 0 36px 8px #ff2a00cc}button.danger{animation:none;background:var(--red)}}
+#tt{font-size:1.15rem;color:var(--ink);min-height:6em}
+#cb{position:absolute;inset:0;z-index:7;background:#140d0bf7;display:flex;flex-direction:column;justify-content:center;gap:12px;padding:16px;text-align:center;overflow-y:auto}
+#cb h2{margin:0;font-size:1.4rem;color:var(--red)}
+.bar{height:12px;background:#000;border:1px solid #4a2c22;border-radius:6px;overflow:hidden;margin:4px 0}
+.bar i{display:block;height:100%;transition:width .3s}
+#cbl{min-height:6em;font-size:.95rem}
+#cba{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#cba small{font-size:.7rem;color:var(--dim)}
+#mg{display:flex;flex-direction:column;align-items:center;gap:14px;width:100%}
+#qt1 small{font-size:1rem;color:var(--dim)}
+.mgb{font-size:1.6rem;padding:28px 40px}
+.gr{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.mgc{font-size:2rem;padding:14px 18px}
+.big{font-size:4rem}
+.gr3{display:grid;grid-template-columns:1fr 1fr;gap:10px;justify-items:center}
+#ar{position:relative;width:80vw;max-width:340px;height:200px;border:2px dashed #fff}
+#ar button{position:absolute}
+#tr{position:relative;width:80vw;max-width:340px;height:28px;background:#000;border:2px solid #fff;border-radius:6px}
+#zn{position:absolute;top:0;bottom:0;width:22%;background:var(--green)}
+#mk{position:absolute;top:-5px;bottom:-5px;width:6px;background:#fff;left:0}
+#act{display:flex;flex-wrap:wrap;gap:6px;flex-shrink:0}
+#act button{flex:1;padding:10px 6px;font-size:.85rem;background:#0b140d;border-color:#2f5a38;color:#9fe0a8}
+#qte{position:absolute;inset:0;z-index:8;background:#2a0a08ee;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;font-size:1.6rem;color:#fff;font-weight:bold;text-align:center;padding:20px}
+#qte button{font-size:2rem;padding:26px 44px}
+#qbar{width:70%;height:10px;background:#000;border-radius:5px;overflow:hidden}
+#qbar i{display:block;height:100%;background:var(--red);animation:qb 1s linear forwards}
+@keyframes qb{from{width:100%}to{width:0}}
+#mid{flex:1;text-align:center;color:var(--dim);font-style:italic;padding:0 8px;font-size:.95rem}
+#cam{position:absolute;inset:0;background:#0b140d;color:#9fe0a8;display:flex;flex-direction:column;padding:10px;gap:8px;font-family:ui-monospace,Menlo,monospace}
+#feed{flex:1;border:1px solid #2f5a38;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:2.4rem;gap:4px;min-height:0;text-align:center;background:repeating-linear-gradient(0deg,#0000 0 3px,#0003 3px 4px)}
+#feed small{font-size:.9rem;color:#9fe0a8}
+#tabs{display:grid;grid-template-columns:repeat(6,1fr);gap:4px}
+.mc{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:42px;border:1px solid #2f5a38;border-radius:6px;background:#0b140d;color:#9fe0a8;font:inherit;font-size:.95rem;padding:2px;line-height:1.1;cursor:default}
+.mc small{font-size:.6rem;color:#6fae7a}
+button.mc{cursor:pointer}
+.mc.on{background:#2f5a38}
+.mc.me{border-color:#e0a030;color:#e0a030}
+.mc.me small{color:#e0a030}
+#tabs button.on{background:#2f5a38;color:#fff}
+#ctl{display:grid;grid-template-columns:1fr 1fr 1.2fr 1fr 1fr;gap:6px}
+#ctl button{padding:10px 2px;font-size:.76rem;line-height:1.3}
+#scare{position:absolute;inset:0;z-index:9;background:#000;display:flex;align-items:center;justify-content:center;flex-direction:column;font-size:12rem;animation:sh .08s infinite}
+@keyframes sh{0%{transform:translate(-8px,4px) scale(1.2)}50%{transform:translate(8px,-6px) scale(1.5)}100%{transform:translate(-4px,-8px) scale(1.3)}}
+@media (prefers-reduced-motion:reduce){#scare{animation:none}}
+.cast{display:grid;gap:4px;text-align:left;font-size:.92rem;color:var(--dim)}
+.cast b{color:var(--ink)}
+</style></head>
+<body><div id="app">
+
+<div class="screen" id="title">
+ <h1><small>Five Nights at</small>Ceresini’s</h1>
+ <p>Ceresini’s Pizza Palace has been closed since 1987. Now two Ceresinis and two Pershouses, black shadow figures with way too much band camp in them, roam the halls. Survive 12 AM to 6 AM. Play with sound on; headphones are best.</p>
+ <div class="cast"><span><b>Two Ceresinis and two Pershouses</b> prowl both halls</span></div>
+ <p>Close a door when someone is outside. Doors, lights and cameras drain power.</p>
+ <div id="diffs"></div><p id="dd"></p>
+ <button class="go" id="start">Start Night <span id="nn">1</span></button>
+ <button id="reset" class="hide">Restart from Night 1</button>
+ <button id="howto">How to play</button>
+</div>
+
+<div id="hud"><span id="clock"><b>12 AM</b></span><span id="nl">Night 1</span><span id="pt">Power 100%</span></div>
+<div id="pw"><div id="pwf"></div></div>
+<div id="view">
+ <div class="door" id="dL"><span id="eL"></span><small class="dl" id="tL"></small></div>
+ <div id="mid"></div>
+ <div class="door" id="dR"><span id="eR"></span><small class="dl" id="tR"></small></div>
+ <div id="cam" class="hide">
+  <div id="feed"></div>
+  <div id="tabs"></div>
+ </div>
+</div>
+<div id="hint">Door: closed blocks anyone outside, but it can be broken. Light: shows who is outside. Both use power.</div>
+<div id="ctl">
+ <button id="bL" class="warn">Left door</button>
+ <button id="lL" class="lit">Light</button>
+ <button id="bC">Cameras</button>
+ <button id="lR" class="lit">Light</button>
+ <button id="bR" class="warn">Right door</button>
+</div>
+
+<div class="screen hide" id="tut"><h1 style="font-size:1.8rem">How to play</h1><p id="tt"></p><button class="go" id="tn">Next</button></div>
+<div class="screen hide" id="end"><h1 id="et"></h1><p id="em"></p><button class="go" id="again"></button></div>
+<div id="qte" class="hide"><div id="qt1"></div><button class="go" id="qb">BRACE!</button><div id="qbar"></div><div id="mg"></div></div>
+<div id="scare" class="hide"></div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const ROOMS={stage:'Show Stage',dining:'Dining Room',kitchen:'Kitchen',hallL:'Left Hall',hallR:'Right Hall'};
+const SIDE={doorL:'L',doorR:'R'};
+const CHARS=[
+ {n:'Ceresini',e:'👤',room:'stage',ai:[3,5,7,10,13],path:{stage:'dining',dining:'hallL',hallL:'doorL'},q:['Tuba players have feelings too.','Is that a B-flat, or are you just happy to see me?','Who took my valve oil?','I’m not loud, I’m the foundation of the ensemble.']},
+ {n:'Pershouse',e:'👤',room:'stage',ai:[2,4,7,10,14],path:{stage:'kitchen',kitchen:'hallR',hallR:'doorR'},q:['My reed cracked. Again.','It’s not a squeak, it’s an overtone.','Did you practice your long tones?','Please don’t call it a horn.']}
+];
+const LANE={dining:'hallL',hallL:'doorL',kitchen:'hallR',hallR:'doorR'};
+CHARS.push({...CHARS[0],path:{stage:'kitchen',kitchen:'hallR',hallR:'doorR'}},{...CHARS[1],path:{stage:'dining',dining:'hallL',hallL:'doorL'}});
+let S,saved=0,tick1,tick2,audio;
+try{saved=+localStorage.getItem('c5')||0}catch(e){}
+let night=Math.min(saved,4);
+function ac(){audio=audio||new (window.AudioContext||window.webkitAudioContext)();if(audio.state==='suspended')audio.resume();return audio}
+function beep(f,d,t='square',v=.15,pan=0){try{const a=ac(),o=a.createOscillator(),g=a.createGain();o.type=t;o.frequency.value=f;g.gain.value=v;o.connect(g);if(a.createStereoPanner){const p=a.createStereoPanner();p.pan.value=pan;g.connect(p);p.connect(a.destination)}else g.connect(a.destination);o.start();g.gain.exponentialRampToValueAtTime(.001,a.currentTime+d);o.stop(a.currentTime+d)}catch(e){}}
+function speak(c){try{const u=new SpeechSynthesisUtterance(c.q[Math.floor(Math.random()*c.q.length)]);u.pitch=c.n==='Ceresini'?.3:1.5;u.rate=.85;speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}}
+let hum;function startHum(){stopHum();try{const a=ac(),o=a.createOscillator(),g=a.createGain();o.type='sawtooth';o.frequency.value=50;g.gain.value=.015;o.connect(g);g.connect(a.destination);o.start();hum=o}catch(e){}}
+function stopHum(){try{hum&&hum.stop()}catch(e){}hum=null}
+function title(){$('nn').textContent=night+1;$('reset').classList.toggle('hide',night===0);$('title').classList.remove('hide')}
+function begin(){
+ $('title').classList.add('hide');$('end').classList.add('hide');$('scare').classList.add('hide');
+ S={t:0,power:100,L:false,R:false,lL:false,lR:false,cam:false,sel:'stage',dead:false,out:false,outT:0,
+    ch:CHARS.map(c=>({...c,room:'stage'}))};
+ $('nl').textContent='Night '+(night+1);
+ $('cam').classList.add('hide');
+ clearInterval(tick1);clearInterval(tick2);
+ startHum();tick1=setInterval(sec,1000);tick2=setInterval(move,D.tick);
+ draw();
+}
+function usage(){return 1+(S.L)+(S.R)+(S.lL)+(S.lR)+(S.cam)}
+function sec(){if(S&&S.qte)return;
+ if(S.dead)return;
+ S.t++;
+ if(!S.out){S.power-=(0.1+0.2*((S.L?1:0)+(S.R?1:0)+(S.cam?1:0)+(S.lL?1:0)+(S.lR?1:0))+0.02*night)*D.dr;if(S.power<=0){S.power=0;S.out=true;S.L=S.R=S.lL=S.lR=S.cam=false;$('cam').classList.add('hide');S.outT=0;beep(60,1.2,'sawtooth')}}
+ else{S.outT++;beep(70+S.outT*12,.4,'sine',.2);if(S.outT===6)beep(220,.4,'triangle');if(S.outT>=10)return kill(CHARS[1])}
+ if(S.t>=240)return win();
+ draw();
+}
+function move(){if(S&&S.qte)return;
+ if(S.dead)return;
+ const h=Math.floor(S.t/40);
+ for(const c of S.ch){
+  const lvl=(c.ai[night]+h)*D.m;
+  if(Math.random()*20>=lvl)continue;
+  const side=SIDE[c.room];
+  if(side){
+   if(!S.out&&S[side]){if(Math.random()<D.br+.06*night)return qte(c,side);c.room='stage';beep(90,.2,'sine',.3,side==='L'?-1:1)}
+   else return kill(c);
+  }else{
+   let nx=c.room==='stage'?(Math.random()<.5?'dining':'kitchen'):LANE[c.room];
+   if(c.n.startsWith('Piccolo')&&c.room==='kitchen')nx=Math.random()<.5?'doorL':'doorR';
+   if(nx){c.room=nx;c.mv=S.t;say(c,Math.random()<.5);if(S.cam||Math.random()<.4)beep(140,.12,'sine',.12,/L$/.test(nx)?-1:/R$/.test(nx)?1:0)}
+  }
+ }
+ draw();
+}
+const TAUNT=['You lost to a Pershouse. A Pershouse. Your section leader is ashamed.','Even the tuba section would have survived that.','Did you practice, or did you just hope?','That was a rest, not a performance. Try again.','Band camp is not for the weak. Or for you.','You cracked faster than my reed.'];
+function gun(){try{const a=ac(),n=a.createBuffer(1,a.sampleRate*.6,a.sampleRate),d=n.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.exp(-i/(a.sampleRate*.06));const s=a.createBufferSource(),g=a.createGain(),f=a.createBiquadFilter();g.gain.value=1;f.type='lowpass';f.frequency.value=3500;s.buffer=n;s.connect(f);f.connect(g);g.connect(a.destination);s.start();beep(60,.35,'sine',.9);beep(120,.2,'square',.4)}catch(e){}}
+const R=n=>Math.floor(Math.random()*n);
+const MG=[
+ {n:'MASH!',f(el,fin){let n=0;el.innerHTML='<button class="mgb" id="mb">PUSH!<br><b id="mn">0</b> / 8</button>';$('mb').onclick=()=>{n++;$('mn').textContent=n;beep(200+n*40,.05);if(n>=8)fin(true)}}},
+ {n:'STOP!',f(el,fin){el.innerHTML='<div id="tr"><div id="zn"></div><div id="mk"></div></div><button class="mgb" id="mb">STOP!</button>';let x=0,d=1;const z=15+R(55),sp=1.7+Math.random();$('zn').style.left=z+'%';const iv=setInterval(()=>{x+=d*sp;if(x>=100||x<=0)d*=-1;$('mk').style.left=x+'%'},16);$('mb').onclick=()=>fin(x>=z&&x<=z+22);return iv}},
+ {n:'FIND IT!',f(el,fin){const a=['🎷','🎺','🥁','🎻'],b=a[R(4)];let o;do{o=a[R(4)]}while(o===b);const k=R(9);el.innerHTML='<div class="gr">'+Array.from({length:9},(_,i)=>'<button class="mgc" data-i="'+i+'">'+(i===k?o:b)+'</button>').join('')+'</div>';el.onclick=e=>{const c=e.target.closest('.mgc');if(c)fin(+c.dataset.i===k)}}},
+ {n:'MATCH IT!',f(el,fin){const A=['⬅️','⬆️','➡️','⬇️'],t=A[R(4)];el.innerHTML='<div class="big">'+t+'</div><div class="gr3">'+A.map(x=>'<button class="mgc" data-a="'+x+'">'+x+'</button>').join('')+'</div>';el.onclick=e=>{const c=e.target.closest('.mgc');if(c)fin(c.dataset.a===t)}}},
+ {n:"DON'T TOUCH!",t:1,f(el,fin){el.innerHTML='<button class="mgb" id="mb">🚫</button>';$('mb').onclick=()=>fin(false)}},
+ {n:'COUNT IT!',f(el,fin){const k=2+R(5),o=[k];while(o.length<3){const v=2+R(5);if(!o.includes(v))o.push(v)}o.sort(()=>Math.random()-.5);el.innerHTML='<div class="big" style="font-size:2.2rem;max-width:90vw">'+'🎺'.repeat(k)+'</div><div class="gr3">'+o.map(x=>'<button class="mgc" data-v="'+x+'">'+x+'</button>').join('')+'</div>';el.onclick=e=>{const c=e.target.closest('.mgc');if(c)fin(+c.dataset.v===k)}}},
+ {n:'COLORS!',f(el,fin){const C=[['RED','#e22'],['BLUE','#26e'],['GREEN','#2b4'],['YELLOW','#ed2']],t=R(4);el.innerHTML='<div class="big" style="font-size:2rem">TAP '+C[t][0]+'</div><div class="gr3">'+[0,1,2,3].sort(()=>Math.random()-.5).map(i=>'<button class="mgc" data-i="'+i+'" style="background:'+C[i][1]+';width:90px;height:64px"></button>').join('')+'</div>';el.onclick=e=>{const c=e.target.closest('.mgc');if(c)fin(+c.dataset.i===t)}}},
+ {n:'MATH!',f(el,fin){const a=1+R(9),b=1+R(9),k=a+b,o=[k];while(o.length<4){const v=k+R(7)-3;if(v>1&&!o.includes(v))o.push(v)}o.sort(()=>Math.random()-.5);el.innerHTML='<div class="big">'+a+' + '+b+'</div><div class="gr3">'+o.map(x=>'<button class="mgc" data-v="'+x+'">'+x+'</button>').join('')+'</div>';el.onclick=e=>{const c=e.target.closest('.mgc');if(c)fin(+c.dataset.v===k)}}},
+ {n:'TAP 3 TIMES!',f(el,fin){let n=0;el.innerHTML='<button class="mgb" id="mb">TAP<br><b id="mn">0</b></button>';el._ok=()=>n===3;$('mb').onclick=()=>{n++;$('mn').textContent=n;beep(300,.05);if(n>3)fin(false)}}},
+ {n:'CATCH IT!',f(el,fin){el.innerHTML='<div id="ar"><button class="mgc" id="mb">🎷</button></div>';const b=$('mb');b.onclick=()=>fin(true);const mv=()=>{b.style.left=R(75)+'%';b.style.top=R(70)+'%'};mv();return setInterval(mv,550)}},
+ {n:'OPPOSITE!',f(el,fin){const A=['⬅️','⬆️','➡️','⬇️'],t=R(4),o=(t+2)%4;el.innerHTML='<div class="big">'+A[t]+'</div><div class="gr3">'+A.map((x,i)=>'<button class="mgc" data-i="'+i+'">'+x+'</button>').join('')+'</div>';el.onclick=e=>{const c=e.target.closest('.mgc');if(c)fin(+c.dataset.i===o)}}}];
+function runMG(c,side,k,tot){
+ if(k>=tot)return mgDone(c,side,true);
+ const g=MG[R(MG.length)],ms=Math.round(2600*D.sp),el=$('mg');
+ $('qt1').innerHTML=g.n+'<br><small>'+(k+1)+' / '+tot+'</small>';$('qb').classList.add('hide');
+ $('qbar').innerHTML='<i style="animation-duration:'+ms+'ms"></i>';
+ el.innerHTML='';el.onclick=null;el._ok=null;
+ let end=false,iv=0;
+ const fin=ok=>{if(end)return;end=true;clearTimeout(tm);clearInterval(iv);el.onclick=null;if(ok){beep(520+k*80,.1,'triangle');setTimeout(()=>runMG(c,side,k+1,tot),300)}else mgDone(c,side,false)};
+ const tm=setTimeout(()=>fin(el._ok?el._ok():!!g.t),ms);
+ iv=g.f(el,fin)||0;
+}
+function mgDone(c,side,ok){
+ $('mg').innerHTML='';
+ if(ok){$('qt1').textContent='HELD!';beep(660,.3,'triangle');setTimeout(()=>{$('qte').classList.add('hide');S.qte=false;c.room='stage';draw()},500)}
+ else{$('qte').classList.add('hide');S.qte=false;kill(c)}
+}
+function say2(t){try{const u=new SpeechSynthesisUtterance(t);u.pitch=.1;u.rate=.7;speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}}
+function qte(c,side){
+ S.qte=true;const q=$('qte');$('qb').classList.remove('hide');$('mg').innerHTML='';
+ $('qt1').textContent='💥';for(let i=0;i<5;i++)setTimeout(()=>beep(70,.15,'square',.4,side==='L'?-1:1),i*180);
+ $('qbar').innerHTML='<i style="animation-duration:'+D.win+'ms"></i>';q.classList.remove('hide');beep(70,.5,'sawtooth',.3);
+ let done=false;
+ const fin=ok=>{if(done)return;done=true;clearTimeout(tm);if(ok){beep(500,.15,'triangle');runMG(c,side,0,D.mg)}else{q.classList.add('hide');S.qte=false;kill(c)}};
+ const tm=setTimeout(()=>fin(false),D.win);
+ $('qb').onclick=()=>fin(true);
+}
+function say(c,f){if(f)speak(c)}
+function kill(c){
+ if(S.dead)return;S.dead=true;stopHum();clearInterval(tick1);clearInterval(tick2);
+ const s=$('scare');s.className=di===3?'bc':'';s.innerHTML='<div class="shd">'+(di===3?'👤👤👤':'👤')+'</div>';gun();speak(c);s.classList.remove('hide');if(di===3){setTimeout(gun,400);beep(40,2.2,'sawtooth',.8);beep(1800,.8,'sawtooth',.5);beep(2400,.8,'square',.3);try{navigator.vibrate&&navigator.vibrate([100,50,200,50,400])}catch(e){}}
+ try{const b=audio||(audio=new (window.AudioContext||window.webkitAudioContext)());const n=b.createBuffer(1,b.sampleRate*(di===3?2.2:.8),b.sampleRate),d=n.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*(1-i/d.length);const src=b.createBufferSource(),g=b.createGain();g.gain.value=di===3?1:.5;src.buffer=n;src.connect(g);g.connect(b.destination);src.start()}catch(e){}
+ setTimeout(()=>{s.classList.add('hide');end(false,c);if(di===3)say2($('em').textContent)},di===3?2400:1400);
+}
+function win(){
+ S.dead=true;stopHum();clearInterval(tick1);clearInterval(tick2);beep(660,.6,'triangle');
+ if(night+1>saved){saved=night+1;try{localStorage.setItem('c5',saved)}catch(e){}}
+ if(night===4){night=0;try{localStorage.setItem('c5',0)}catch(e){}return end(true,null,true)}
+ night++;end(true);
+}
+function end(w,c,all){
+ $('end').classList.remove('hide');
+ $('et').textContent=all?'You survived all 5 nights':w?'6 AM':di===3?'Band camp wins':'Game over';
+ $('em').textContent=(!w&&di===3)?TAUNT[Math.floor(Math.random()*TAUNT.length)]:all?'Ceresini’s goes quiet. You walk out into the sunrise. Nobody will believe you.':w?'Sunlight hits the windows and the lights stop humming. Night '+night+' is next.':c.n+' got to you'+(S.out?' after the power went out.':'. Close the door before they reach it.');
+ $('again').textContent=all?'Play again':w?'Start Night '+(night+1):'Retry Night '+(night+1);
+}
+function draw(){
+ const hr=Math.floor(S.t/40);$('clock').innerHTML='<b>'+(hr===0?12:hr)+' AM</b>';
+ const p=Math.max(0,Math.round(S.power));$('pt').textContent='Power '+p+'%  ·  Use '+usage();
+ const f=$('pwf');f.style.width=p+'%';f.style.background=p>40?'var(--green)':p>15?'var(--amber)':'var(--red)';
+ for(const k of ['L','R']){
+  $('d'+k).classList.toggle('shut',S[k]);$('d'+k).classList.toggle('lit',S['l'+k]);
+  const who=S.ch.filter(c=>c.room==='door'+k);
+  $('e'+k).textContent=S['l'+k]&&who.length?who[0].e:'';
+  $('b'+k).classList.toggle('on',S[k]);$('l'+k).classList.toggle('on',S['l'+k]);
+  const nm=k==='L'?'Left':'Right',lit=S['l'+k]&&!S.out;
+  
+  $('b'+k).innerHTML='🚪 '+nm+' door<br><b>'+(S.out?'no power':S[k]?'CLOSED':'open')+'</b>';
+  $('l'+k).innerHTML='💡 '+nm+' light<br><b>'+(D.nl?'unavailable':S.out?'no power':S['l'+k]?'ON':'off, costs 6%')+'</b>';
+  const t=$('t'+k);$('l'+k).disabled=!!D.nl;const w=lit&&who.length>0;if(w&&!S['w'+k]){beep(900,.5,'sawtooth',.25,k==='L'?-1:1);beep(1350,.5,'sawtooth',.15,k==='L'?-1:1)}S['w'+k]=w;
+  t.textContent=S[k]?'door closed':'door open';
+ }
+ $('bC').classList.toggle('on',S.cam);$('bC').innerHTML='📹 Cameras<br><b>'+(S.out?'no power':S.cam?'ON':'off')+'</b>';
+ const near=S.ch.some(c=>c.room.startsWith('door'));
+ $('mid').textContent='';
+ $('cam').classList.toggle('hide',!S.cam);if(S.cam)drawCam();
+}
+function drawCam(){
+ S.seen=S.seen||{};
+ const sc=S.ch.filter(c=>c.room===S.sel);S.seen[S.sel]={t:S.t,c:sc.length};
+ const LY=[['stage','Stage','2/6','1'],['dining','Dining','1/4','2'],['kitchen','Kitchen','4/7','2'],['hallL','L Hall','1/4','3'],['hallR','R Hall','4/7','3'],['doorL','L Door','1/3','4'],['office','YOU','3/5','4'],['doorR','R Door','5/7','4']];
+ $('tabs').innerHTML=LY.map(([id,lb,c,r])=>{
+  let m='',tag='div';
+  if(id==='office')m='🔦';
+  else if(id.startsWith('door')){const k=SIDE[id];m=(S[k]?'🔒':'')+(S['l'+k]&&S.ch.some(x=>x.room===id)?'<span class="sh">👤</span>':'')}
+  else{tag='button';const sn=S.seen[id];
+   if(S.sel===id)m=sc.length?'<span class="sh">'+'👤'.repeat(sc.length)+'</span>':'';
+   
+   }
+  return '<'+tag+' class="mc'+(S.sel===id?' on':'')+(id==='office'?' me':'')+'" style="grid-column:'+c+';grid-row:'+r+'"'+(tag==='button'?' data-r="'+id+'"':'')+'><small>'+lb+'</small>'+m+'</'+tag+'>'}).join('');
+ const here=S.ch.filter(c=>c.room===S.sel);
+ 
+ 
+ 
+ 
+ 
+ $('feed').innerHTML=(here.length?'<div class="sh">'+here.map(c=>c.e).join(' ')+'</div>':'<div style="opacity:.25">·</div>')+'<small>CAM · '+ROOMS[S.sel]+(here.length?' · '+here.map(c=>c.n).join(', '):' · empty')+'</small>';
+}
+function bind(id,fn){$(id).addEventListener('click',()=>{if(!S||S.dead)return;fn();beep(300,.05);draw()})}
+bind('bL',()=>{if(!S.out)S.L=!S.L});bind('bR',()=>{if(!S.out)S.R=!S.R});
+bind('lL',()=>{if(!S.out&&!D.nl){S.lL=!S.lL;if(S.lL){S.lR=false;S.power-=6}}});bind('lR',()=>{if(!S.out&&!D.nl){S.lR=!S.lR;if(S.lR){S.lL=false;S.power-=6}}});
+
+bind('bC',()=>{if(S.out)return;S.cam=!S.cam;$('cam').classList.toggle('hide',!S.cam)});
+$('tabs').addEventListener('click',e=>{const b=e.target.closest('[data-r]');if(b){S.sel=b.dataset.r;draw()}});
+const TUT=['You are the night guard. Survive from 12 AM to 6 AM while the shadows Ceresini and Pershouse creep toward your office.','Tap Cameras to open the map. You are at the bottom. Tap a room to watch it live; you only see the room you picked. There are two Ceresinis and two Pershouses. One of each comes down each hall.','Listen closely: footsteps are louder on the side they come from, and they speak. Tap a light to check outside the door, but turning one on costs 6% of your power. Lights are disabled on the two hardest difficulties.','Tap the door button to close it. A closed door usually sends them back, but they can break through. When you hear banging, tap BRACE within 1 second. Doors, lights and cameras drain power, and at 0% the doors open.','Tap BRACE, then clear a rapid-fire run of micro-games. Do what the prompt says before the bar runs out. Fail any one and you lose.'];
+let ti=0,afterTut=false;
+function showT(){$('tt').textContent=TUT[ti];$('tn').textContent=ti<TUT.length-1?'Next ('+(ti+1)+'/'+TUT.length+')':afterTut?'Start Night':'Got it'}
+function tut(next){ti=0;afterTut=next;showT();$('tut').classList.remove('hide')}
+$('tn').onclick=()=>{if(ti<TUT.length-1){ti++;showT();return}$('tut').classList.add('hide');try{localStorage.setItem('c5t',1)}catch(e){}if(afterTut)begin()};
+$('start').onclick=()=>{let seen=0;try{seen=localStorage.getItem('c5t')}catch(e){}seen?begin():tut(true)};
+$('howto').onclick=()=>tut(false);
+const DIFF=[
+ {n:'Rehearsal',d:'Gentle. Slow shadows and weak door breaks.',m:.55,tick:5000,dr:.7,br:.08,win:1500,mg:2,sp:1.3},
+ {n:'Concert',d:'The standard performance.',m:.85,tick:4000,dr:1,br:.2,win:1000,mg:3,sp:1},
+ {n:'Marching Season',d:'Faster, hungrier, louder. No lights.',nl:1,m:1.3,tick:3200,dr:1.2,br:.35,win:800,mg:4,sp:.85},
+ {n:'Band Camp',d:'Basically impossible. No lights. Nobody survives band camp.',nl:1,m:3,tick:1500,dr:1.7,br:.85,win:350,mg:5,sp:.65}];
+let di=1;try{const sv=localStorage.getItem('c5d');if(sv!==null&&+sv>=0&&+sv<4)di=+sv}catch(e){}
+let D=DIFF[di];
+function drawD(){$('diffs').innerHTML=DIFF.map((x,i)=>'<button data-i="'+i+'" class="'+(i===di?'on':'')+(i===3?' warn':'')+'">'+x.n+'</button>').join('');$('dd').textContent=D.d}
+$('diffs').addEventListener('click',e=>{const b=e.target.closest('[data-i]');if(b){di=+b.dataset.i;D=DIFF[di];try{localStorage.setItem('c5d',di)}catch(e){}drawD()}});
+drawD();
+$('again').onclick=begin;
+$('reset').onclick=()=>{night=0;try{localStorage.setItem('c5',0)}catch(e){}title()};
+title();
+</script></body></html>
